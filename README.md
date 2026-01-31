@@ -16,3 +16,8 @@ https://microsoftlearning.github.io/mslearn-develop-oop-csharp/
 
 ## Status
 Active learning project.
+
+## Development Roadmap
+| Exercise | Description |
+| :--- | :--- |
+|**Ex 1: Create Classes & Objects** | - Created `BankCustomer` class structure.<br>- Created `BankAccount` class structure.<br>- Implemented basic Console test in `Program.cs`.|
