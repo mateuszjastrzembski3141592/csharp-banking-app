@@ -20,4 +20,5 @@ Active learning project.
 ## Development Roadmap
 | Exercise | Description |
 | :--- | :--- |
-|**Ex 1: Create Classes & Objects** | - Created `BankCustomer` class structure.<br>- Created `BankAccount` class structure.<br>- Implemented basic Console test in `Program.cs`.|
+|**Ex 1: Create class definitions and instantiate objects** | - Created `BankCustomer` class structure.<br>- Created `BankAccount` class structure.<br>- Implemented basic Console test in `Program.cs`.|
+|**Ex 2: Update a class with properties and methods** | - Encapsulated data using properties in `BankCustomer` and `BankAccount`.<br>- Implemented basic methods to change and display customer info in `BankCustomer`.<br>- Implemented core banking methods in `BankAccount`.<br>- Created extension methods in `Extensions.cs` for `BankCustomer` and `BankAccount`.<br>- Updated `Program.cs` to test the new logic.|
