@@ -2,7 +2,7 @@ using System;
 
 namespace BankingApp;
 
-public class BankCustomer
+public partial class BankCustomer
 {
     private static int s_nextCustomerId;
     private string _firstName = "Tim";
@@ -34,22 +34,12 @@ public class BankCustomer
         CustomerId = s_nextCustomerId++.ToString("D10");
     }
 
-    // Method to return the full name of the customer
-    public string ReturnFullName()
+    // Copy constructor for BankCustomer
+    public BankCustomer(BankCustomer existingCustomer)
     {
-        return $"{FirstName} {LastName}";
-    }
-
-    // Method to update the customer's name
-    public void UpdateName(string firstName, string lastName)
-    {
-        FirstName = firstName;
-        LastName = lastName;
-    }
-
-    // Method to display customer information
-    public string DisplayCustomerInfo()
-    {
-        return $"Customer ID: {CustomerId}, Name: {ReturnFullName()}";
+        FirstName = existingCustomer.FirstName;
+        LastName = existingCustomer.LastName;
+        //CustomerId = existingCustomer.CustomerId;
+        CustomerId = s_nextCustomerId++.ToString("D10");
     }
 }
