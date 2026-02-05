@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace BankingApp;
 
@@ -27,7 +28,8 @@ class Program
         // Create BankAccount objects for customers
         Console.WriteLine("\nCreating BankAccount objects for customers...");
 
-        BankAccount account1 = new(customer1.CustomerId);
+        // BankAccount account1 = new(customer1.CustomerId);
+        BankAccount account1 = new(customer1.CustomerId, 1000, "Checking");
         BankAccount account2 = new(customer2.CustomerId, 1500, "Checking");
         BankAccount account3 = new(customer3.CustomerId, 2500, "Checking");
 
@@ -46,25 +48,72 @@ class Program
         Console.WriteLine("\nDemonstrating BankAccount methods...");
 
         // Deposit
-        Console.WriteLine("\nDepositing 500 into Account 1...");
-        account1.Deposit(500);
-        Console.WriteLine($"Account 1 after the deposit: Balance: {account1.Balance}");
+        double depositAmount = 500;
+        Console.WriteLine($"Depositing {depositAmount.ToString("C", CultureInfo.CurrentCulture)} into Account 1...");
+        account1.Deposit(depositAmount);
+        Console.WriteLine($"Account 1 after deposit: Balance: {account1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
 
         // Withdraw
-        Console.WriteLine("\nWithdrawing 200 from Account 2...");
-        bool withdrawSuccess = account2.Withdraw(200);
-        Console.WriteLine($"Account 2 after withdrawal: Balance: {account2.Balance}, Withdrawal successful: {withdrawSuccess}");
+        double withdrawalAmount = 200;
+        Console.WriteLine($"Withdrawing {withdrawalAmount.ToString("C", CultureInfo.CurrentCulture)} from Account 2...");
+        bool withdrawSuccess = account2.Withdraw(withdrawalAmount);
+        Console.WriteLine($"Account 2 after withdrawal: Balance: {account2.Balance.ToString("C", CultureInfo.CurrentCulture)}, Withdrawal successful: {withdrawSuccess}");
 
         // Transfer
-        Console.WriteLine("\nTransfering 300 from Account 3 to Account 1...");
-        bool transferSuccess = account3.Transfer(account1, 300);
-        Console.WriteLine($"Account 3 after transfer: Balance: {account3.Balance}, Transfer successful: {transferSuccess}");
-        Console.WriteLine($"Account 1 after receiving transfer: Balance: {account1.Balance}");
+        double transferAmount = 300;
+        Console.WriteLine($"Transferring {transferAmount.ToString("C", CultureInfo.CurrentCulture)} from Account 3 to Account 1...");
+        bool transferSuccess = account3.Transfer(account1, transferAmount);
+        Console.WriteLine($"Account 3 after transfer: Balance: {account3.Balance.ToString("C", CultureInfo.CurrentCulture)}, Transfer successful: {transferSuccess}");
+        Console.WriteLine($"Account 1 after receiving transfer: Balance: {account1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+
+        // Demonstrate the use of utility methods in AccountCalculations
+        Console.WriteLine("\nDemonstrating utility methods in AccountCalculations...");
+
+        // Calculate compunt interes for account1
+        double principal = account1.Balance;
+        double rate = BankAccount.InterestRate;
+        double time = 1; // 1 year
+        double compoundInterest = AccountCalculations.CalculateCompoundInterest(principal, rate, time);
+        Console.WriteLine($"Compount interest on account1 balance of {principal.ToString("C", CultureInfo.CurrentCulture)} at {rate * 100:F2}% for {time} year: {compoundInterest.ToString("C", CultureInfo.CurrentCulture)}");
+
+        // Validate account number for account1
+        int accountNumber = account1.AccountNumber;
+        bool isValidAccountNumber = AccountCalculations.ValidateAccountNumber(accountNumber);
+        Console.WriteLine($"Is account number {accountNumber} valid? {isValidAccountNumber}");
+
+        // Calculate transaction fee using rates and max fee values from the bank account class
+        double transactionAmount = 800;
+        double transactionFee = AccountCalculations.CalculateTransactionFee(transactionAmount, BankAccount.TransactionRate, BankAccount.MaxTransactionFee);
+        Console.WriteLine($"Transaction fee for a {transactionAmount.ToString("C", CultureInfo.CurrentCulture)} wire transfer at a {BankAccount.TransactionRate * 100:F2}% rate and a max fee of {BankAccount.MaxTransactionFee.ToString("C", CultureInfo.CurrentCulture)} is: {transactionFee.ToString("C", CultureInfo.CurrentCulture)}");
+
+        // Calculate overdraft fee using rates and max fee values from the bank account class
+        double overdrawnAmount = 500;
+        double overdraftFee = AccountCalculations.CalculateOverdraftFee(overdrawnAmount, BankAccount.OverdraftRate, BankAccount.MaxOverdraftFee);
+        Console.WriteLine($"Overdraft fee for an account that's {overdrawnAmount.ToString("C", CultureInfo.CurrentCulture)} overdrawn, using a penalty rate of {BankAccount.OverdraftRate * 100:F2}% and a max fee of {BankAccount.MaxOverdraftFee.ToString("C", CultureInfo.CurrentCulture)} is: {overdraftFee.ToString("C", CultureInfo.CurrentCulture)}");
+
+        // Exchange currency
+        double originalCurrencyProvided = 100;
+        double currentExchangeRate = 1.2;
+        double foreignCurrencyReceived = AccountCalculations.ReturnForeignCurrency(originalCurrencyProvided, currentExchangeRate);
+        Console.WriteLine($"The foreign currency received after exchanging {originalCurrencyProvided.ToString("C", CultureInfo.CurrentCulture)} at an exchange rate of {currentExchangeRate:F2} is: {foreignCurrencyReceived.ToString("C", CultureInfo.CurrentCulture)}");
 
         // Apply interest
-        Console.WriteLine("Applying interest to Account 1...");
-        account1.ApplyInterest();
-        Console.WriteLine($"Account 1 after applying interest: Balance: {account1.Balance}");
+        Console.WriteLine("\nApplying interest to Account 1...");
+        double timePeriodYears = 30 / 365.0; // calculate the interest accrued during the past 30 days
+        account1.ApplyInterest(timePeriodYears);
+        Console.WriteLine($"Account 1 after applying interest: Balance: {account1.Balance.ToString("C", CultureInfo.CurrentCulture)}, Interest Rate: {BankAccount.InterestRate:P2}, Time Period: {timePeriodYears:F2} years");
+
+        // Issue cashier's check
+        Console.WriteLine("Issue cashier's check from account 2...");
+        double checkAmount = 500;
+        bool receivedCashiersCheck = account2.IssueCashiersCheck(checkAmount);
+        Console.WriteLine($"Account 2 after requesting cashier's check: Received cashier's check: {receivedCashiersCheck}, Balance: {account2.Balance.ToString("C", CultureInfo.CurrentCulture)}, Transaction Amount: {checkAmount.ToString("C", CultureInfo.CurrentCulture)}, Transaction Fee Rate: {BankAccount.TransactionRate:P2}, Max Transaction Fee: {BankAccount.MaxTransactionFee.ToString("C", CultureInfo.CurrentCulture)}");
+
+        // Apply refund
+        Console.WriteLine("Applying refund to Account 3...");
+        double refundAmount = 50;
+        account3.ApplyRefund(refundAmount);
+        Console.WriteLine($"Account 3 after applying refund: Balance: {account3.Balance.ToString("C", CultureInfo.CurrentCulture)}, Refund Amount: {refundAmount.ToString("C", CultureInfo.CurrentCulture)}");
 
         // Demonstrate the use of extension methods
         Console.WriteLine("\nDemonstrating extension methods...");
@@ -77,5 +126,53 @@ class Program
         Console.WriteLine("\nDisplaying customer and account information...");
         Console.WriteLine(customer1.DisplayCustomerInfo());
         Console.WriteLine(account1.DisplayAccountInfo());
+
+        // Demonstrate the use of named and optional parameters
+        Console.WriteLine("\nDemonstrating named and optionam parameters...");
+        string customerId = customer1.CustomerId;
+        double openingBalance = 1500;
+
+        // specify a customer ID and use default optional parameters
+        BankAccount account4 = new(customerId);
+        Console.WriteLine(account4.DisplayAccountInfo());
+
+        // specify customer ID and opening balance and use default account type
+        BankAccount account5 = new(customer1.CustomerId, openingBalance);
+        Console.WriteLine(account5.DisplayAccountInfo());
+
+        // specify a customer ID and use a named parameter to specify account type
+        BankAccount account6 = new(customer2.CustomerId, accountType: "Checking");
+        Console.WriteLine(account6.DisplayAccountInfo());
+
+        // use named parameters to specify all parameters
+        BankAccount account7 = new(accountType: "Checking", balance: 5000, customerIdNumber: customer2.CustomerId);
+        Console.WriteLine(account7.DisplayAccountInfo());
+
+        // Demonstrate using object initializers and copy constructors
+        Console.WriteLine("\nDemonstrating object initializers and copy constructors...");
+
+        // Using object initializer
+        BankCustomer customer4 = new("Mikaela", "Lee")
+        {
+            FirstName = "Mikaela",
+            LastName = "Lee"
+        };
+        Console.WriteLine($"BankCustomer 4: {customer4.FirstName} {customer4.LastName} {customer4.CustomerId}");
+
+        // Using copy constructor
+        BankCustomer customer5 = new(customer4);
+        Console.WriteLine($"BankCustomer 5 (copy of customer4): {customer5.FirstName} {customer5.LastName} {customer5.CustomerId}");
+
+        // Using object initializer
+        BankAccount account8 = new(customer4.CustomerId)
+        {
+            AccountType = "Savings"
+        };
+        Console.WriteLine($"Account 8: Account # {account8.AccountNumber}, type {account8.AccountType}, balance {account8.Balance}, rate {BankAccount.InterestRate}, customer ID {account8.CustomerId}");
+
+        // Using copy constructor
+        BankAccount account9 = new(account4);
+        Console.WriteLine($"Account 9 (copy of account4): Account # {account9.AccountNumber}, type {account9.AccountType}, balance {account9.Balance}, rate {BankAccount.InterestRate}, customer ID {account9.CustomerId}");
+
     }
 }
