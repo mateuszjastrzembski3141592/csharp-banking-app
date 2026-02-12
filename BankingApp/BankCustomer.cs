@@ -2,12 +2,12 @@ using System;
 
 namespace BankingApp;
 
-public partial class BankCustomer
+public partial class BankCustomer : IBankCustomer
 {
     private static int s_nextCustomerId;
     private string _firstName = "Tim";
     private string _lastName = "Shao";
-    public readonly string CustomerId;
+    public string CustomerId { get; }
 
     public string FirstName
     {
@@ -39,7 +39,6 @@ public partial class BankCustomer
     {
         FirstName = existingCustomer.FirstName;
         LastName = existingCustomer.LastName;
-        //CustomerId = existingCustomer.CustomerId;
         CustomerId = s_nextCustomerId++.ToString("D10");
     }
 }

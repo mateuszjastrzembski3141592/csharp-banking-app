@@ -2,9 +2,9 @@ using System;
 
 namespace BankingApp;
 
-public class BankAccount
+public class BankAccount : IBankAccount
 {
-    private static int s_nextAccountNumber = 1;
+    private static int s_nextAccountNumber;
 
     // Public read-only static properties
     public static double InterestRate { get; private set; }
@@ -68,7 +68,7 @@ public class BankAccount
     }
 
     // Method to transfer money to another account
-    public bool Transfer(BankAccount targetAccount, double amount)
+    public bool Transfer(IBankAccount targetAccount, double amount)
     {
         if (Withdraw(amount))
         {
@@ -103,8 +103,6 @@ public class BankAccount
     {
         Balance += refund;
     }
-
-
 
     // Method to display account information
     public string DisplayAccountInfo()
