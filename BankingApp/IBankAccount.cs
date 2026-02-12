@@ -1,0 +1,19 @@
+using System;
+
+namespace BankingApp;
+
+public interface IBankAccount
+{
+    int AccountNumber { get; }
+    string CustomerId { get; }
+    double Balance { get; }
+    string AccountType { get; }
+
+    void Deposit(double amount);
+    bool Withdraw(double amount);
+    bool Transfer(IBankAccount targetAccount, double amount);
+    void ApplyInterest(double years);
+    bool IssueCashiersCheck(double amount);
+    void ApplyRefund(double refund);
+    string DisplayAccountInfo();
+}

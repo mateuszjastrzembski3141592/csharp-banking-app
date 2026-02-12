@@ -28,8 +28,7 @@ class Program
         // Create BankAccount objects for customers
         Console.WriteLine("\nCreating BankAccount objects for customers...");
 
-        // BankAccount account1 = new(customer1.CustomerId);
-        BankAccount account1 = new(customer1.CustomerId, 1000, "Checking");
+        BankAccount account1 = new(customer1.CustomerId);
         BankAccount account2 = new(customer2.CustomerId, 1500, "Checking");
         BankAccount account3 = new(customer3.CustomerId, 2500, "Checking");
 
