@@ -8,170 +8,98 @@ class Program
     static void Main()
     {
         // Create BankCustomer objects
-        Console.WriteLine("Creating BankCustomer objects...");
-
         string firstName = "Tim";
         string lastName = "Shao";
+
+        Console.WriteLine($"Creating a BankCustomer object for customer {firstName} {lastName}...");
         BankCustomer customer1 = new(firstName, lastName);
 
-        firstName = "Lisa";
-        BankCustomer customer2 = new(firstName, lastName);
+        // Demonstrate instantiating derived classes
+        Console.WriteLine($"\nUsing derived classes to create bank account objects for {customer1.ReturnFullName()}...");
 
-        firstName = "Sandy";
-        lastName = "Zoeng";
-        BankCustomer customer3 = new(firstName, lastName);
+        // BankAccount bankAccount1 = new(customer1.CustomerId, 1000, "Checking");
+        CheckingAccount checkingAccount1 = new(customer1.CustomerId, 500);
+        SavingsAccount savingsAccount1 = new(customer1.CustomerId, 1000);
+        MoneyMarketAccount moneyMarketAccount1 = new(customer1.CustomerId, 2000);
 
-        Console.WriteLine($"BankCustomer 1: {customer1.FirstName} {customer1.LastName} {customer1.CustomerId}");
-        Console.WriteLine($"BankCustomer 2: {customer2.FirstName} {customer2.LastName} {customer2.CustomerId}");
-        Console.WriteLine($"BankCustomer 3: {customer3.FirstName} {customer3.LastName} {customer3.CustomerId}");
+        // Demonstrate using inherited properties
+        Console.WriteLine($"\nUsing inherited properties to display {customer1.ReturnFullName()}'s account information...");
 
-        // Create BankAccount objects for customers
-        Console.WriteLine("\nCreating BankAccount objects for customers...");
+        // Console.WriteLine($" - {bankAccount1.AccountType} account #{bankAccount1.AccountNumber} has a balance of {bankAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+        Console.WriteLine($" - {checkingAccount1.AccountType} account #{checkingAccount1.AccountNumber} has a balance of {checkingAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+        Console.WriteLine($" - {savingsAccount1.AccountType} account #{savingsAccount1.AccountNumber} has a balance of {savingsAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+        Console.WriteLine($" - {moneyMarketAccount1.AccountType} account #{moneyMarketAccount1.AccountNumber} has a balance of {moneyMarketAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
 
-        BankAccount account1 = new(customer1.CustomerId);
-        BankAccount account2 = new(customer2.CustomerId, 1500, "Checking");
-        BankAccount account3 = new(customer3.CustomerId, 2500, "Checking");
+        // Demonstrate using inherited methods
+        double transactionAmount = 200;
 
-        Console.WriteLine($"Account 1: Account # {account1.AccountNumber}, type {account1.AccountType}, balance {account1.Balance}, rate {BankAccount.InterestRate}, customer ID {account1.CustomerId}");
-        Console.WriteLine($"Account 2: Account # {account2.AccountNumber}, type {account2.AccountType}, balance {account2.Balance}, rate {BankAccount.InterestRate}, customer ID {account2.CustomerId}");
-        Console.WriteLine($"Account 3: Account # {account3.AccountNumber}, type {account3.AccountType}, balance {account3.Balance}, rate {BankAccount.InterestRate}, customer ID {account3.CustomerId}");
+        Console.WriteLine("\nDemonstrating inheritance of the Withdraw, Transfer, and Deposit methods from the base class...");
 
-        // Demonstrate the use of BankCustomer properties
-        Console.WriteLine("\nUpdating BankCustomer 1's name...");
+        // Withdraw from checking account
+        Console.WriteLine($" - Withdraw {transactionAmount} from {checkingAccount1.AccountType} account");
+        checkingAccount1.Withdraw(transactionAmount);
+        Console.WriteLine($" - {checkingAccount1.AccountType} account #{checkingAccount1.AccountNumber} has a balance of {checkingAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
 
-        customer1.FirstName = "Thomas";
-        customer1.LastName = "Margand";
-        Console.WriteLine($"Updated BankCustomer 1: {customer1.FirstName} {customer1.LastName} {customer1.CustomerId}");
+        // Transfer from savings account to checking account
+        Console.WriteLine($" - Transfer {transactionAmount.ToString("C", CultureInfo.CurrentCulture)} from {savingsAccount1.AccountType} account into {checkingAccount1.AccountType} account");
+        savingsAccount1.Transfer(checkingAccount1, transactionAmount);
+        Console.WriteLine($" - {savingsAccount1.AccountType} account #{savingsAccount1.AccountNumber} has a balance of {savingsAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+        Console.WriteLine($" - {checkingAccount1.AccountType} account #{checkingAccount1.AccountNumber} has a balance of {checkingAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+        
+        // Deposit into money making account
+        Console.WriteLine($" - Deposit {transactionAmount.ToString("C", CultureInfo.CurrentCulture)} into {moneyMarketAccount1.AccountType} account");
+        moneyMarketAccount1.Deposit(transactionAmount);
+        Console.WriteLine($" - {moneyMarketAccount1.AccountType} account #{moneyMarketAccount1.AccountNumber} has a balance of {moneyMarketAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
 
-        // Demonstrate the use of BankAccount methods
-        Console.WriteLine("\nDemonstrating BankAccount methods...");
+        // Demonstrate using the `new` keyword to override a base class method
+        Console.WriteLine("\nDemonstrating the use of the `new` keyword to override a base class method...");
 
-        // Deposit
-        double depositAmount = 500;
-        Console.WriteLine($"Depositing {depositAmount.ToString("C", CultureInfo.CurrentCulture)} into Account 1...");
-        account1.Deposit(depositAmount);
-        Console.WriteLine($"Account 1 after deposit: Balance: {account1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+        Console.WriteLine($" - {checkingAccount1.DisplayAccountInfo()}");
+        Console.WriteLine($" - {savingsAccount1.DisplayAccountInfo()}");
+        Console.WriteLine($" - {moneyMarketAccount1.DisplayAccountInfo()}");
 
-        // Withdraw
-        double withdrawalAmount = 200;
-        Console.WriteLine($"Withdrawing {withdrawalAmount.ToString("C", CultureInfo.CurrentCulture)} from Account 2...");
-        bool withdrawSuccess = account2.Withdraw(withdrawalAmount);
-        Console.WriteLine($"Account 2 after withdrawal: Balance: {account2.Balance.ToString("C", CultureInfo.CurrentCulture)}, Withdrawal successful: {withdrawSuccess}");
+        // Demonstrate the overridden properties and methods
+        Console.WriteLine("\nDemonstrating specialized Withdraw behavior:");
 
-        // Transfer
-        double transferAmount = 300;
-        Console.WriteLine($"Transferring {transferAmount.ToString("C", CultureInfo.CurrentCulture)} from Account 3 to Account 1...");
-        bool transferSuccess = account3.Transfer(account1, transferAmount);
-        Console.WriteLine($"Account 3 after transfer: Balance: {account3.Balance.ToString("C", CultureInfo.CurrentCulture)}, Transfer successful: {transferSuccess}");
-        Console.WriteLine($"Account 1 after receiving transfer: Balance: {account1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+        // CheckingAccount: Withdraw within overdraft limit
+        Console.WriteLine("\nCheckingAccount: Attempting to withdraw $600 (within overdraft limit)...");
+        checkingAccount1.Withdraw(600);
+        Console.WriteLine(checkingAccount1.DisplayAccountInfo());
 
-        // Demonstrate the use of utility methods in AccountCalculations
-        Console.WriteLine("\nDemonstrating utility methods in AccountCalculations...");
+        // CheckingAccount: Withdraw exceeding overdraft limit
+        Console.WriteLine("\nCheckingAccount: Attempting to withdraw $1000 (exceeding overdraft limit)...");
+        checkingAccount1.Withdraw(1000);
+        Console.WriteLine(checkingAccount1.DisplayAccountInfo());
 
-        // Calculate compunt interes for account1
-        double principal = account1.Balance;
-        double rate = BankAccount.InterestRate;
-        double time = 1; // 1 year
-        double compoundInterest = AccountCalculations.CalculateCompoundInterest(principal, rate, time);
-        Console.WriteLine($"Compount interest on account1 balance of {principal.ToString("C", CultureInfo.CurrentCulture)} at {rate * 100:F2}% for {time} year: {compoundInterest.ToString("C", CultureInfo.CurrentCulture)}");
+        // SavingsAccount: Withdraw within limit
+        Console.WriteLine("\nSavingsAccount: Attempting to withdraw $200 (within withdraw limit)...");
+        savingsAccount1.Withdraw(200);
+        Console.WriteLine(savingsAccount1.DisplayAccountInfo());
 
-        // Validate account number for account1
-        int accountNumber = account1.AccountNumber;
-        bool isValidAccountNumber = AccountCalculations.ValidateAccountNumber(accountNumber);
-        Console.WriteLine($"Is account number {accountNumber} valid? {isValidAccountNumber}");
+        // SavingsAccount: Withdraw exceeding limit
+        Console.WriteLine("\nSavingsAccount: Attempting to withdraw $900 (exceeding withdraw limit)...");
+        savingsAccount1.Withdraw(900);
+        Console.WriteLine(savingsAccount1.DisplayAccountInfo());
 
-        // Calculate transaction fee using rates and max fee values from the bank account class
-        double transactionAmount = 800;
-        double transactionFee = AccountCalculations.CalculateTransactionFee(transactionAmount, BankAccount.TransactionRate, BankAccount.MaxTransactionFee);
-        Console.WriteLine($"Transaction fee for a {transactionAmount.ToString("C", CultureInfo.CurrentCulture)} wire transfer at a {BankAccount.TransactionRate * 100:F2}% rate and a max fee of {BankAccount.MaxTransactionFee.ToString("C", CultureInfo.CurrentCulture)} is: {transactionFee.ToString("C", CultureInfo.CurrentCulture)}");
+        // SavingsAccount: Exceed maximum number of withdrawals per month
+        Console.WriteLine("\nSavingsAccount: Exceeding maximum number of withdrawals per month");
+        savingsAccount1.ResetWithdrawalLimit();
 
-        // Calculate overdraft fee using rates and max fee values from the bank account class
-        double overdrawnAmount = 500;
-        double overdraftFee = AccountCalculations.CalculateOverdraftFee(overdrawnAmount, BankAccount.OverdraftRate, BankAccount.MaxOverdraftFee);
-        Console.WriteLine($"Overdraft fee for an account that's {overdrawnAmount.ToString("C", CultureInfo.CurrentCulture)} overdrawn, using a penalty rate of {BankAccount.OverdraftRate * 100:F2}% and a max fee of {BankAccount.MaxOverdraftFee.ToString("C", CultureInfo.CurrentCulture)} is: {overdraftFee.ToString("C", CultureInfo.CurrentCulture)}");
-
-        // Exchange currency
-        double originalCurrencyProvided = 100;
-        double currentExchangeRate = 1.2;
-        double foreignCurrencyReceived = AccountCalculations.ReturnForeignCurrency(originalCurrencyProvided, currentExchangeRate);
-        Console.WriteLine($"The foreign currency received after exchanging {originalCurrencyProvided.ToString("C", CultureInfo.CurrentCulture)} at an exchange rate of {currentExchangeRate:F2} is: {foreignCurrencyReceived.ToString("C", CultureInfo.CurrentCulture)}");
-
-        // Apply interest
-        Console.WriteLine("\nApplying interest to Account 1...");
-        double timePeriodYears = 30 / 365.0; // calculate the interest accrued during the past 30 days
-        account1.ApplyInterest(timePeriodYears);
-        Console.WriteLine($"Account 1 after applying interest: Balance: {account1.Balance.ToString("C", CultureInfo.CurrentCulture)}, Interest Rate: {BankAccount.InterestRate:P2}, Time Period: {timePeriodYears:F2} years");
-
-        // Issue cashier's check
-        Console.WriteLine("Issue cashier's check from account 2...");
-        double checkAmount = 500;
-        bool receivedCashiersCheck = account2.IssueCashiersCheck(checkAmount);
-        Console.WriteLine($"Account 2 after requesting cashier's check: Received cashier's check: {receivedCashiersCheck}, Balance: {account2.Balance.ToString("C", CultureInfo.CurrentCulture)}, Transaction Amount: {checkAmount.ToString("C", CultureInfo.CurrentCulture)}, Transaction Fee Rate: {BankAccount.TransactionRate:P2}, Max Transaction Fee: {BankAccount.MaxTransactionFee.ToString("C", CultureInfo.CurrentCulture)}");
-
-        // Apply refund
-        Console.WriteLine("Applying refund to Account 3...");
-        double refundAmount = 50;
-        account3.ApplyRefund(refundAmount);
-        Console.WriteLine($"Account 3 after applying refund: Balance: {account3.Balance.ToString("C", CultureInfo.CurrentCulture)}, Refund Amount: {refundAmount.ToString("C", CultureInfo.CurrentCulture)}");
-
-        // Demonstrate the use of extension methods
-        Console.WriteLine("\nDemonstrating extension methods...");
-        Console.WriteLine(customer1.GreetCustomer());
-        Console.WriteLine($"Is customer1 ID valid? {customer1.IsValidCustomerId()}");
-        Console.WriteLine($"Can account2 withdraw 2000? {account2.CanWithdraw(2000)}");
-        Console.WriteLine($"Is account3 overdrawn? {account3.IsOverdrawn()}");
-
-        // Display customer and account information
-        Console.WriteLine("\nDisplaying customer and account information...");
-        Console.WriteLine(customer1.DisplayCustomerInfo());
-        Console.WriteLine(account1.DisplayAccountInfo());
-
-        // Demonstrate the use of named and optional parameters
-        Console.WriteLine("\nDemonstrating named and optionam parameters...");
-        string customerId = customer1.CustomerId;
-        double openingBalance = 1500;
-
-        // specify a customer ID and use default optional parameters
-        BankAccount account4 = new(customerId);
-        Console.WriteLine(account4.DisplayAccountInfo());
-
-        // specify customer ID and opening balance and use default account type
-        BankAccount account5 = new(customer1.CustomerId, openingBalance);
-        Console.WriteLine(account5.DisplayAccountInfo());
-
-        // specify a customer ID and use a named parameter to specify account type
-        BankAccount account6 = new(customer2.CustomerId, accountType: "Checking");
-        Console.WriteLine(account6.DisplayAccountInfo());
-
-        // use named parameters to specify all parameters
-        BankAccount account7 = new(accountType: "Checking", balance: 5000, customerIdNumber: customer2.CustomerId);
-        Console.WriteLine(account7.DisplayAccountInfo());
-
-        // Demonstrate using object initializers and copy constructors
-        Console.WriteLine("\nDemonstrating object initializers and copy constructors...");
-
-        // Using object initializer
-        BankCustomer customer4 = new("Mikaela", "Lee")
+        for (int i = 0; i < 7; i++)
         {
-            FirstName = "Mikaela",
-            LastName = "Lee"
-        };
-        Console.WriteLine($"BankCustomer 4: {customer4.FirstName} {customer4.LastName} {customer4.CustomerId}");
+            Console.WriteLine($"Attempting to withdraw $50 (withdrawal {i + 1})...");
+            savingsAccount1.Withdraw(50);
+            Console.WriteLine(savingsAccount1.DisplayAccountInfo());
+        }
 
-        // Using copy constructor
-        BankCustomer customer5 = new(customer4);
-        Console.WriteLine($"BankCustomer 5 (copy of customer4): {customer5.FirstName} {customer5.LastName} {customer5.CustomerId}");
+        // MoneyMarketAccount: Withdraw within minimum balance
+        Console.WriteLine("\nMoneyMarketAccount: Attempting to withdraw $1000 (maintaining minimum balance)...");
+        moneyMarketAccount1.Withdraw(1000);
+        Console.WriteLine(moneyMarketAccount1.DisplayAccountInfo());
 
-        // Using object initializer
-        BankAccount account8 = new(customer4.CustomerId)
-        {
-            AccountType = "Savings"
-        };
-        Console.WriteLine($"Account 8: Account # {account8.AccountNumber}, type {account8.AccountType}, balance {account8.Balance}, rate {BankAccount.InterestRate}, customer ID {account8.CustomerId}");
-
-        // Using copy constructor
-        BankAccount account9 = new(account4);
-        Console.WriteLine($"Account 9 (copy of account4): Account # {account9.AccountNumber}, type {account9.AccountType}, balance {account9.Balance}, rate {BankAccount.InterestRate}, customer ID {account9.CustomerId}");
-
+        // MoneyMarketAccount: Withdraw exceeding minimum balance
+        Console.WriteLine("\nMoneyMarketAccount: Attempting to withdraw $1900 (exceeding minimum balance)...");
+        moneyMarketAccount1.Withdraw(1900);
+        Console.WriteLine(moneyMarketAccount1.DisplayAccountInfo());
     }
 }
