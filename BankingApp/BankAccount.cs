@@ -6,8 +6,8 @@ public class BankAccount : IBankAccount
 {
     private static int s_nextAccountNumber;
 
-    // Public read-only static properties
-    public static double InterestRate { get; private set; }
+    public virtual double InterestRate { get; protected set; }
+
     public static double TransactionRate { get; private set; }
     public static double MaxTransactionFee { get; private set; }
     public static double OverdraftRate { get; private set; }
@@ -15,14 +15,13 @@ public class BankAccount : IBankAccount
 
     public int AccountNumber { get; }
     public string CustomerId { get; }
-    public double Balance { get; private set; } = 0;
+    public double Balance { get; internal set; } = 0;
     public string AccountType { get; set; } = "Checking";
 
     static BankAccount()
     {
         Random random = new();
         s_nextAccountNumber = random.Next(10000000, 20000000);
-        InterestRate = 0.00;
         TransactionRate = 0.01;
         MaxTransactionFee = 10;
         OverdraftRate = 0.05;
@@ -56,7 +55,7 @@ public class BankAccount : IBankAccount
     }
 
     // Method to withdraw money from the account
-    public bool Withdraw(double amount)
+    public virtual bool Withdraw(double amount)
     {
         if (amount > 0 && Balance >= amount)
         {
@@ -105,8 +104,8 @@ public class BankAccount : IBankAccount
     }
 
     // Method to display account information
-    public string DisplayAccountInfo()
+    public virtual string DisplayAccountInfo()
     {
-        return $"Account Number: {AccountNumber}, Type: {AccountType}, Balance: {Balance}, Interest Rate: {InterestRate}, Customer ID: {CustomerId}";
+        return $"Account Number: {AccountNumber}, Type: {AccountType}, Balance: {Balance:C}, Interest Rate: {InterestRate:P}, Customer ID: {CustomerId}";
     }
 }
