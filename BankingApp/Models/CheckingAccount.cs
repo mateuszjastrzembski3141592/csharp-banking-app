@@ -1,6 +1,7 @@
 using System;
+using BankingApp.Services;
 
-namespace BankingApp;
+namespace BankingApp.Models;
 
 public class CheckingAccount : BankAccount
 {

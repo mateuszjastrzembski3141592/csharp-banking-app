@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using BankingApp.Interfaces;
+using BankingApp.Models;
+using BankingApp.Services;
 
 namespace BankingApp;
 
@@ -7,99 +10,142 @@ class Program
 {
     static void Main()
     {
-        // Create BankCustomer objects
-        string firstName = "Tim";
-        string lastName = "Shao";
+        // Demonstrate polymorphism using interfaces
+        Console.WriteLine("Demonstrating polymorphism by treating class types as instances of the same interface...");
 
-        Console.WriteLine($"Creating a BankCustomer object for customer {firstName} {lastName}...");
-        BankCustomer customer1 = new(firstName, lastName);
+        string firstName = "Sandy";
+        string lastName = "Zoeng";
 
-        // Demonstrate instantiating derived classes
-        Console.WriteLine($"\nUsing derived classes to create bank account objects for {customer1.ReturnFullName()}...");
+        // Create an instance of IBankCustomer using BankCustomer
+        IBankCustomer customer1 = new BankCustomer(firstName, lastName);
 
-        // BankAccount bankAccount1 = new(customer1.CustomerId, 1000, "Checking");
-        CheckingAccount checkingAccount1 = new(customer1.CustomerId, 500);
-        SavingsAccount savingsAccount1 = new(customer1.CustomerId, 1000);
-        MoneyMarketAccount moneyMarketAccount1 = new(customer1.CustomerId, 2000);
+        // Create instances of IBankAccount that reference base and derived class types
+        Console.WriteLine("1. Create instances of IBankAccount that reference base and derived class types");
 
-        // Demonstrate using inherited properties
-        Console.WriteLine($"\nUsing inherited properties to display {customer1.ReturnFullName()}'s account information...");
+        IBankAccount account1 = new BankAccount(customer1.CustomerId, 10000);
+        IBankAccount account2 = new CheckingAccount(customer1.CustomerId, 500, 400);
+        IBankAccount account3 = new SavingsAccount(customer1.CustomerId, 1000);
 
-        // Console.WriteLine($" - {bankAccount1.AccountType} account #{bankAccount1.AccountNumber} has a balance of {bankAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
-        Console.WriteLine($" - {checkingAccount1.AccountType} account #{checkingAccount1.AccountNumber} has a balance of {checkingAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
-        Console.WriteLine($" - {savingsAccount1.AccountType} account #{savingsAccount1.AccountNumber} has a balance of {savingsAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
-        Console.WriteLine($" - {moneyMarketAccount1.AccountType} account #{moneyMarketAccount1.AccountNumber} has a balance of {moneyMarketAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+        // Demonstrate polymorphism by treating different types of accounts as instances of the same interface.
+        Console.WriteLine("2. Demonstrate polymorphism by treating different types of accounts as instances of the same interface");
 
-        // Demonstrate using inherited methods
-        double transactionAmount = 200;
+        Console.WriteLine(account1.DisplayAccountInfo());
+        Console.WriteLine(account2.DisplayAccountInfo());
+        Console.WriteLine(account3.DisplayAccountInfo());
 
-        Console.WriteLine("\nDemonstrating inheritance of the Withdraw, Transfer, and Deposit methods from the base class...");
+        // Demonstrate interface-based polymorphism by creating instances of AccountReportGenerator and CustomerReportGenerator
+        Console.WriteLine("\nDemonstrating interface-based polymorphism...");
 
-        // Withdraw from checking account
-        Console.WriteLine($" - Withdraw {transactionAmount} from {checkingAccount1.AccountType} account");
-        checkingAccount1.Withdraw(transactionAmount);
-        Console.WriteLine($" - {checkingAccount1.AccountType} account #{checkingAccount1.AccountNumber} has a balance of {checkingAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+        // Create instances of IReportGenerator using interfaces
+        Console.WriteLine("1. Create instances of IMonthlyReportGenerator, IQuarterlyReportGenerator, and IYearlyReportGenerator that reference CustomerReportGenerator and AccountReportGenerator");
 
-        // Transfer from savings account to checking account
-        Console.WriteLine($" - Transfer {transactionAmount.ToString("C", CultureInfo.CurrentCulture)} from {savingsAccount1.AccountType} account into {checkingAccount1.AccountType} account");
-        savingsAccount1.Transfer(checkingAccount1, transactionAmount);
-        Console.WriteLine($" - {savingsAccount1.AccountType} account #{savingsAccount1.AccountNumber} has a balance of {savingsAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
-        Console.WriteLine($" - {checkingAccount1.AccountType} account #{checkingAccount1.AccountNumber} has a balance of {checkingAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
-        
-        // Deposit into money making account
-        Console.WriteLine($" - Deposit {transactionAmount.ToString("C", CultureInfo.CurrentCulture)} into {moneyMarketAccount1.AccountType} account");
-        moneyMarketAccount1.Deposit(transactionAmount);
-        Console.WriteLine($" - {moneyMarketAccount1.AccountType} account #{moneyMarketAccount1.AccountNumber} has a balance of {moneyMarketAccount1.Balance.ToString("C", CultureInfo.CurrentCulture)}");
+        IMonthlyReportGenerator customerMonthlyReportGenerator = new CustomerReportGenerator(customer1);
+        IQuarterlyReportGenerator customerQuarterlyReportGenerator = new CustomerReportGenerator(customer1);
+        IYearlyReportGenerator customerYearlyReportGenerator = new CustomerReportGenerator(customer1);
 
-        // Demonstrate using the `new` keyword to override a base class method
-        Console.WriteLine("\nDemonstrating the use of the `new` keyword to override a base class method...");
+        IMonthlyReportGenerator accountMonthlyReportGenerator = new AccountReportGenerator(account1);
+        IQuarterlyReportGenerator accountQuarterlyReportGenerator = new AccountReportGenerator(account1);
+        IYearlyReportGenerator accountYearlyReportGenerator = new AccountReportGenerator(account1);
 
-        Console.WriteLine($" - {checkingAccount1.DisplayAccountInfo()}");
-        Console.WriteLine($" - {savingsAccount1.DisplayAccountInfo()}");
-        Console.WriteLine($" - {moneyMarketAccount1.DisplayAccountInfo()}");
+        Console.WriteLine("2. Demonstrate polymorphism by showing that different report generators can be used interchangeably through their interfaces.");
 
-        // Demonstrate the overridden properties and methods
-        Console.WriteLine("\nDemonstrating specialized Withdraw behavior:");
+        customerMonthlyReportGenerator.GenerateMonthlyReport();
+        customerMonthlyReportGenerator.GenerateCurrentMonthToDateReport();
+        customerMonthlyReportGenerator.GeneratePrevious30DayReport();
 
-        // CheckingAccount: Withdraw within overdraft limit
-        Console.WriteLine("\nCheckingAccount: Attempting to withdraw $600 (within overdraft limit)...");
-        checkingAccount1.Withdraw(600);
-        Console.WriteLine(checkingAccount1.DisplayAccountInfo());
+        customerQuarterlyReportGenerator.GenerateQuarterlyReport();
 
-        // CheckingAccount: Withdraw exceeding overdraft limit
-        Console.WriteLine("\nCheckingAccount: Attempting to withdraw $1000 (exceeding overdraft limit)...");
-        checkingAccount1.Withdraw(1000);
-        Console.WriteLine(checkingAccount1.DisplayAccountInfo());
+        customerYearlyReportGenerator.GeneratePreviousYearReport();
+        customerYearlyReportGenerator.GenerateCurrentYearToDateReport();
+        customerYearlyReportGenerator.GenerateLast365DaysReport();
 
-        // SavingsAccount: Withdraw within limit
-        Console.WriteLine("\nSavingsAccount: Attempting to withdraw $200 (within withdraw limit)...");
-        savingsAccount1.Withdraw(200);
-        Console.WriteLine(savingsAccount1.DisplayAccountInfo());
+        accountMonthlyReportGenerator.GenerateMonthlyReport();
+        accountMonthlyReportGenerator.GenerateCurrentMonthToDateReport();
+        accountMonthlyReportGenerator.GeneratePrevious30DayReport();
 
-        // SavingsAccount: Withdraw exceeding limit
-        Console.WriteLine("\nSavingsAccount: Attempting to withdraw $900 (exceeding withdraw limit)...");
-        savingsAccount1.Withdraw(900);
-        Console.WriteLine(savingsAccount1.DisplayAccountInfo());
+        accountQuarterlyReportGenerator.GenerateQuarterlyReport();
 
-        // SavingsAccount: Exceed maximum number of withdrawals per month
-        Console.WriteLine("\nSavingsAccount: Exceeding maximum number of withdrawals per month");
-        savingsAccount1.ResetWithdrawalLimit();
+        accountYearlyReportGenerator.GeneratePreviousYearReport();
+        accountYearlyReportGenerator.GenerateCurrentYearToDateReport();
+        accountYearlyReportGenerator.GenerateLast365DaysReport();
 
-        for (int i = 0; i < 7; i++)
+        Console.WriteLine("\n\n");
+
+        // Demonstrate inheritance-based polymorphism
+        Console.WriteLine("\nDemonstrating inheritance-based polymorphism...");
+
+        // Create a new customer and accounts for inheritance-based polymorphism
+        Console.WriteLine("Creating BankCustomer and BankAccount objects...");
+
+        firstName = "Tim";
+        lastName = "Shao";
+        BankCustomer customer2 = new(firstName, lastName);
+
+        // Create accounts for customer2
+        Console.WriteLine("Creating BankAccount objects for customer2...");
+
+        BankAccount bankAccount1 = new(customer2.CustomerId, 10000);
+        BankAccount bankAccount2 = new CheckingAccount(customer2.CustomerId, 500, 400);
+        BankAccount bankAccount3 = new SavingsAccount(customer2.CustomerId, 1000);
+        BankAccount bankAccount4 = new MoneyMarketAccount(customer2.CustomerId, 2000);
+
+        BankAccount[] bankAccounts = [bankAccount1, bankAccount2, bankAccount3, bankAccount4];
+
+        // Demonstrate polymorphism by accessing overridden methods from the base class reference
+        Console.WriteLine("\nDemonstrating polymorphism by accessing overridden methods from the base class reference:");
+
+        foreach (BankAccount account in bankAccounts)
         {
-            Console.WriteLine($"Attempting to withdraw $50 (withdrawal {i + 1})...");
-            savingsAccount1.Withdraw(50);
-            Console.WriteLine(savingsAccount1.DisplayAccountInfo());
+            Console.WriteLine(account.DisplayAccountInfo());
         }
 
-        // MoneyMarketAccount: Withdraw within minimum balance
-        Console.WriteLine("\nMoneyMarketAccount: Attempting to withdraw $1000 (maintaining minimum balance)...");
-        moneyMarketAccount1.Withdraw(1000);
-        Console.WriteLine(moneyMarketAccount1.DisplayAccountInfo());
+        foreach (BankAccount account in bankAccounts)
+        {
+            if (account is CheckingAccount checkingAccount)
+            {
+                // CheckingAccount: Withdraw within overdraft limit
+                Console.WriteLine("\nCheckingAccount: Attempting to withdraw $600 (within overdraft limit)...");
+                checkingAccount.Withdraw(600);
+                Console.WriteLine(checkingAccount.DisplayAccountInfo());
 
-        // MoneyMarketAccount: Withdraw exceeding minimum balance
-        Console.WriteLine("\nMoneyMarketAccount: Attempting to withdraw $1900 (exceeding minimum balance)...");
-        moneyMarketAccount1.Withdraw(1900);
-        Console.WriteLine(moneyMarketAccount1.DisplayAccountInfo());
+                // CheckingAccount: Withdraw exceeding overdraft limit
+                Console.WriteLine("\nCheckingAccount: Attempting to withdraw $1000 (exceeding overdraft limit)...");
+                checkingAccount.Withdraw(1000);
+                Console.WriteLine(checkingAccount.DisplayAccountInfo());
+            }
+            else if (account is SavingsAccount savingsAccount)
+            {
+                // SavingsAccount: Withdraw within limit
+                Console.WriteLine("\nSavingsAccount: Attempting to withdraw $200 (within withdrawal limit)...");
+                savingsAccount.Withdraw(200);
+                Console.WriteLine(savingsAccount.DisplayAccountInfo());
+
+                // SavingsAccount: Withdraw exceeding limit
+                Console.WriteLine("\nSavingsAccount: Attempting to withdraw $900 (exceeding withdrawal limit)...");
+                savingsAccount.Withdraw(900);
+                Console.WriteLine(savingsAccount.DisplayAccountInfo());
+
+                // SavingsAccount: Exceeding maximum number of withdrawals per month
+                Console.WriteLine("\nSavingsAccount: Exceeding maximum number of withdrawals per month...");
+                for (int i = 0; i < 7; i++)
+                {
+                    Console.WriteLine($"Attempting to withdraw $50 (withdrawal {i + 1})...");
+                    savingsAccount.Withdraw(50);
+                    Console.WriteLine(savingsAccount.DisplayAccountInfo());
+                }
+            }
+            else if (account is MoneyMarketAccount moneyMarketAccount)
+            {
+                // MoneyMarketAccount: Withdraw within minimum balance
+                Console.WriteLine("\nMoneyMarketAccount: Attempting to withdraw $1000 (maintaining minimum balance)...");
+                moneyMarketAccount.Withdraw(1000);
+                Console.WriteLine(moneyMarketAccount.DisplayAccountInfo());
+
+                // MoneyMarketAccount: Withdraw exceeding minimum balance
+                Console.WriteLine("\nMoneyMarketAccount: Attempting to withdraw $1900 (exceeding minimum balance)...");
+                moneyMarketAccount.Withdraw(1900);
+                Console.WriteLine(moneyMarketAccount.DisplayAccountInfo());
+            }
+        }
     }
 }

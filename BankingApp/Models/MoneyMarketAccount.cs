@@ -1,6 +1,6 @@
 using System;
 
-namespace BankingApp;
+namespace BankingApp.Models;
 
 public class MoneyMarketAccount : BankAccount
 {

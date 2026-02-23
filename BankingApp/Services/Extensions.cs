@@ -1,6 +1,7 @@
 using System;
+using BankingApp.Models;
 
-namespace BankingApp;
+namespace BankingApp.Services;
 
 public static class BankCustomerExtensions
 {
