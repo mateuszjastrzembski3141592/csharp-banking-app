@@ -1,12 +1,12 @@
 using System;
+using BankingApp.Interfaces;
+using BankingApp.Services;
 
-namespace BankingApp;
+namespace BankingApp.Models;
 
 public class BankAccount : IBankAccount
 {
     private static int s_nextAccountNumber;
-
-    public virtual double InterestRate { get; protected set; }
 
     public static double TransactionRate { get; private set; }
     public static double MaxTransactionFee { get; private set; }
@@ -17,6 +17,8 @@ public class BankAccount : IBankAccount
     public string CustomerId { get; }
     public double Balance { get; internal set; } = 0;
     public string AccountType { get; set; } = "Checking";
+
+    public virtual double InterestRate { get; protected set; }
 
     static BankAccount()
     {

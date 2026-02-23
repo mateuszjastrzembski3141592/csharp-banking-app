@@ -1,6 +1,7 @@
 using System;
+using BankingApp.Interfaces;
 
-namespace BankingApp;
+namespace BankingApp.Models;
 
 public partial class BankCustomer : IBankCustomer
 {

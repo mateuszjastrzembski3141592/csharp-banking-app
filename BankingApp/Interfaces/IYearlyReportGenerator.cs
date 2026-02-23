@@ -1,0 +1,10 @@
+using System;
+
+namespace BankingApp.Interfaces;
+
+public interface IYearlyReportGenerator
+{
+    void GeneratePreviousYearReport();
+    void GenerateCurrentYearToDateReport();
+    void GenerateLast365DaysReport();
+}
