@@ -1,6 +1,5 @@
 using System;
 
-
 namespace BankingApp.Services;
 
 public static class AccountCalculations

@@ -5,6 +5,9 @@ namespace BankingApp.Models;
 public class SavingsAccount : BankAccount
 {
     private int _withdrawalsThisMonth;
+    
+    public int WithdrawalLimit { get; set; }
+    public double MinimumOpeningBalance { get; set; }
 
     public static int DefaultWithdrawalLimit { get; private set; }
     public static double DefaultMinimumOpeningBalance { get; private set; }
@@ -15,9 +18,6 @@ public class SavingsAccount : BankAccount
         get { return DefaultInterestRate; }
         protected set { DefaultInterestRate = value; }
     }
-
-    public int WithdrawalLimit { get; set; }
-    public double MinimumOpeningBalance { get; set; }
 
     static SavingsAccount()
     {
@@ -39,11 +39,6 @@ public class SavingsAccount : BankAccount
         MinimumOpeningBalance = DefaultMinimumOpeningBalance;
     }
 
-    public override string DisplayAccountInfo()
-    {
-        return base.DisplayAccountInfo() + $", Withdrawal Limit: {WithdrawalLimit},Withdrawals This Month: {_withdrawalsThisMonth}";
-    }
-
     public override bool Withdraw(double amount)
     {
         if (amount > 0 && Balance >= amount && _withdrawalsThisMonth < WithdrawalLimit)
@@ -53,11 +48,16 @@ public class SavingsAccount : BankAccount
             return true;
         }
 
-        return true;
+        return false;
     }
 
     public void ResetWithdrawalLimit()
     {
         _withdrawalsThisMonth = 0;
+    }
+
+    public override string DisplayAccountInfo()
+    {
+        return base.DisplayAccountInfo() + $", Withdrawal Limit: {WithdrawalLimit},Withdrawals This Month: {_withdrawalsThisMonth}";
     }
 }

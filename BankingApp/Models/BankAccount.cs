@@ -48,7 +48,7 @@ public class BankAccount : IBankAccount
     }
 
     // Method to deposit money into the account
-    public void Deposit(double amount)
+    public virtual void Deposit(double amount)
     {
         if (amount > 0)
         {
@@ -69,7 +69,7 @@ public class BankAccount : IBankAccount
     }
 
     // Method to transfer money to another account
-    public bool Transfer(IBankAccount targetAccount, double amount)
+    public virtual bool Transfer(IBankAccount targetAccount, double amount)
     {
         if (Withdraw(amount))
         {
@@ -81,13 +81,13 @@ public class BankAccount : IBankAccount
     }
 
     // Method to apply interest
-    public void ApplyInterest(double years)
+    public virtual void ApplyInterest(double years)
     {
         Balance += AccountCalculations.CalculateCompoundInterest(Balance, InterestRate, years);
     }
 
     // Method to issue a cashier's check
-    public bool IssueCashiersCheck(double amount)
+    public virtual bool IssueCashiersCheck(double amount)
     {
         if (amount > 0 && Balance >= amount + MaxTransactionFee)
         {
@@ -100,7 +100,7 @@ public class BankAccount : IBankAccount
     }
 
     // Method to apply a refund
-    public void ApplyRefund(double refund)
+    public virtual void ApplyRefund(double refund)
     {
         Balance += refund;
     }
@@ -111,3 +111,5 @@ public class BankAccount : IBankAccount
         return $"Account Number: {AccountNumber}, Type: {AccountType}, Balance: {Balance:C}, Interest Rate: {InterestRate:P}, Customer ID: {CustomerId}";
     }
 }
+
+// TODO: Potential change - mark BankAccount as abstract.

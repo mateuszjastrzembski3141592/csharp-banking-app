@@ -5,6 +5,7 @@ namespace BankingApp.Models;
 
 public class CheckingAccount : BankAccount
 {
+    public double OverdraftLimit { get; set; }
 
     public static double DefaultOverdraftLimit { get; private set; }
     public static double DefaultInterestRate { get; private set; }
@@ -14,8 +15,6 @@ public class CheckingAccount : BankAccount
         get { return DefaultInterestRate; }
         protected set { DefaultInterestRate = value; }
     }
-
-    public double OverdraftLimit { get; set; }
 
     static CheckingAccount()
     {
@@ -29,27 +28,27 @@ public class CheckingAccount : BankAccount
         OverdraftLimit = overdraftLimit;
     }
 
-    public override string DisplayAccountInfo()
-    {
-        return base.DisplayAccountInfo() + $", Overdraft Limit: {OverdraftLimit}";
-    }
-
     public override bool Withdraw(double amount)
     {
         if (amount > 0 && Balance + OverdraftLimit >= amount)
         {
-            Balance -= amount;
+            bool result = base.Withdraw(amount);
 
-            if (Balance < 0)
+            if (result && Balance < 0)
             {
                 double overdraftFee = AccountCalculations.CalculateOverdraftFee(Math.Abs(Balance), BankAccount.OverdraftRate, BankAccount.MaxOverdraftFee);
                 Balance -= overdraftFee;
                 Console.WriteLine($"Overdraft fee of ${overdraftFee} applied.");
             }
 
-            return true;
+            return result;
         }
 
-        return true;
+        return false;
+    }
+
+    public override string DisplayAccountInfo()
+    {
+        return base.DisplayAccountInfo() + $", Overdraft Limit: {OverdraftLimit}";
     }
 }
