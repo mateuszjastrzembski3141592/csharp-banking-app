@@ -4,10 +4,12 @@ namespace BankingApp.Models;
 
 public class MoneyMarketAccount : BankAccount
 {
+    public double MinimumBalance { get; set; }
+    public double MinimumOpeningBalance { get; set; }
 
+    public static double DefaultInterestRate { get; private set; }
     public static double DefaultMinimumBalance { get; private set; }
     public static double DefaultMinimumOpeningBalance { get; private set; }
-    public static double DefaultInterestRate { get; private set; }
 
     public override double InterestRate
     {
@@ -15,15 +17,11 @@ public class MoneyMarketAccount : BankAccount
         protected set { DefaultInterestRate = value; }
     }
 
-    public double MinimumBalance { get; set; }
-    public double MinimumOpeningBalance { get; set; }
-
-
     static MoneyMarketAccount()
     {
+        DefaultInterestRate = 0.04;
         DefaultMinimumBalance = 1000;
         DefaultMinimumOpeningBalance = 2000;
-        DefaultInterestRate = 0.04;
     }
 
     public MoneyMarketAccount(string customerIdNumber, double balance = 2000, double minimumBalance = 1000)
@@ -38,11 +36,6 @@ public class MoneyMarketAccount : BankAccount
         MinimumOpeningBalance = DefaultMinimumOpeningBalance;
     }
 
-    public override string DisplayAccountInfo()
-    {
-        return base.DisplayAccountInfo() + $", Minimum Balance: {MinimumBalance}, Minimum Opening Balance: {MinimumOpeningBalance}";
-    }
-
     public override bool Withdraw(double amount)
     {
         if (amount > 0 && Balance - amount >= MinimumBalance)
@@ -51,6 +44,11 @@ public class MoneyMarketAccount : BankAccount
             return true;
         }
 
-        return true;
+        return false;
+    }
+
+    public override string DisplayAccountInfo()
+    {
+        return base.DisplayAccountInfo() + $", Minimum Balance: {MinimumBalance}, Minimum Opening Balance: {MinimumOpeningBalance}";
     }
 }

@@ -3,11 +3,12 @@ using BankingApp.Interfaces;
 
 namespace BankingApp.Models;
 
-public partial class BankCustomer : IBankCustomer
+public abstract partial class BankCustomer : IBankCustomer
 {
     private static int s_nextCustomerId;
     private string _firstName = "Tim";
     private string _lastName = "Shao";
+
     public string CustomerId { get; }
 
     public string FirstName
@@ -24,7 +25,7 @@ public partial class BankCustomer : IBankCustomer
 
     static BankCustomer()
     {
-        Random random = new Random();
+        Random random = new();
         s_nextCustomerId = random.Next(10000000, 20000000);
     }
 
