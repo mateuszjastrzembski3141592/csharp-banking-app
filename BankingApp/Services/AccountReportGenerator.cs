@@ -40,31 +40,31 @@ public class AccountReportGenerator : IMonthlyReportGenerator, IQuarterlyReportG
 
     public void GenerateCurrentMonthToDateReport(Transaction[] transactions, DateOnly endDate)
     {
-        Console.WriteLine($"Generating current month-to-date report for account: {_account.AccountNumber}");
+        Console.WriteLine($"Generating current month-to-date report for {_account.AccountType} account number: {_account.AccountNumber}");
     }
 
     public void GeneratePrevious30DayReport(Transaction[] transactions, DateOnly endDate)
     {
-        Console.WriteLine($"Generating previous 30 days report for account: {_account.AccountNumber}");
+        Console.WriteLine($"Generating previous 30 days report for {_account.AccountType} account number: {_account.AccountNumber}");
     }
 
     public void GenerateQuarterlyReport(Transaction[] transactions, DateOnly reportDate)
     {
-        Console.WriteLine($"Generating quarterly report for account: {_account.AccountNumber}");
+        Console.WriteLine($"Generating quarterly report for {_account.AccountType} account number: {_account.AccountNumber}");
     }
 
     public void GeneratePreviousYearReport(Transaction[] transactions, DateOnly reportDate)
     {
-        Console.WriteLine($"Generating previous year report for account: {_account.AccountNumber}");
+        Console.WriteLine($"Generating previous year report for {_account.AccountType} account number: {_account.AccountNumber}");
     }
 
     public void GenerateCurrentYearToDateReport(Transaction[] transactions, DateOnly endDate)
     {
-        Console.WriteLine($"Generating current year-to-date report for account: {_account.AccountNumber}");
+        Console.WriteLine($"Generating current year-to-date report for {_account.AccountType} account number: {_account.AccountNumber}");
     }
 
     public void GenerateLast365DaysReport(Transaction[] transactions, DateOnly endDate)
     {
-        Console.WriteLine($"Generating last 365 days report for account: {_account.AccountNumber}");
+        Console.WriteLine($"Generating last 365 days report for {_account.AccountType} account number: {_account.AccountNumber}");
     }
 }
