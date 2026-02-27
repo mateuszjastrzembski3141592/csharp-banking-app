@@ -5,7 +5,7 @@ namespace BankingApp.Models;
 public class SavingsAccount : BankAccount
 {
     private int _withdrawalsThisMonth;
-    
+
     public int WithdrawalLimit { get; set; }
     public double MinimumOpeningBalance { get; set; }
 
@@ -26,8 +26,8 @@ public class SavingsAccount : BankAccount
         DefaultInterestRate = 0.02;
     }
 
-    public SavingsAccount(string customerIdNumber, double balance = 500, int withdrawalLimit = 6)
-        : base(customerIdNumber, balance, "Savings")
+    public SavingsAccount(BankCustomer owner, string customerIdNumber, double balance = 500, int withdrawalLimit = 6)
+        : base(owner, customerIdNumber, balance, "Savings")
     {
         if (Balance < DefaultMinimumOpeningBalance)
         {
@@ -39,13 +39,13 @@ public class SavingsAccount : BankAccount
         MinimumOpeningBalance = DefaultMinimumOpeningBalance;
     }
 
-    public override bool Withdraw(double amount)
+    public override bool Withdraw(double amount, DateOnly transactionDate, TimeOnly transactionTime, string description)
     {
         if (amount > 0 && Balance >= amount && _withdrawalsThisMonth < WithdrawalLimit)
         {
-            Balance -= amount;
+            bool result = base.Withdraw(amount, transactionDate, transactionTime, description);
             _withdrawalsThisMonth++;
-            return true;
+            return result;
         }
 
         return false;

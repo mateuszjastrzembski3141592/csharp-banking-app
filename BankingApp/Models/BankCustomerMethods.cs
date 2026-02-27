@@ -27,4 +27,6 @@ public abstract partial class BankCustomer : IBankCustomer
     public abstract bool IsPremiumCustomer();
 
     public abstract void ApplyBenefits();
+
+    // Task 3: Step 7 - Add account-management methods
 }

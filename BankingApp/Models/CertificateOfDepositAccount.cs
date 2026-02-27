@@ -24,8 +24,8 @@ public class CertificateOfDepositAccount : BankAccount
         DefaultTermInMonths = 6;
     }
 
-    public CertificateOfDepositAccount(string customerIdNumber, double balance = 1000, int termInMonths = 6, double earlyWithdrawalPenalty = 0.1)
-        : base(customerIdNumber, balance, "Certificate of Deposit")
+    public CertificateOfDepositAccount(BankCustomer owner, string customerIdNumber, double balance = 1000, int termInMonths = 6, double earlyWithdrawalPenalty = 0.1)
+        : base(owner, customerIdNumber, balance, "Certificate of Deposit")
     {
         if (termInMonths != 6 && termInMonths != 12)
         {
@@ -37,7 +37,7 @@ public class CertificateOfDepositAccount : BankAccount
         //InterestRate = (termInMonths == 12) ? LongTermInterestRate : DefaultInterestRate; // Set the interest rate based on the term
     }
 
-    public override bool Withdraw(double amount)
+    public override bool Withdraw(double amount, DateOnly transactionDate, TimeOnly transactionTime, string description)
     {
         if (DateTime.Now < MaturityDate)
         {
