@@ -11,7 +11,7 @@ public interface IBankAccount
     string AccountType { get; }
     BankCustomer Owner { get; }
 
-    // Task 4: Step 1 - Add Transactions property
+    IReadOnlyList<Transaction> Transactions { get; }
 
     void Deposit(double amount, DateOnly transactionDate, TimeOnly transactionTime, string description);
     bool Withdraw(double amount, DateOnly transactionDate, TimeOnly transactionTime, string description);
@@ -21,5 +21,6 @@ public interface IBankAccount
     void ApplyRefund(double refund, DateOnly transactionDate, TimeOnly transactionTime, string description);
     string DisplayAccountInfo();
 
-    // Task 4: Step 2 - Add methods to log and retrieve transactions
+    void AddTransaction(Transaction transaction);
+    List<Transaction> GetAllTransactions();
 }

@@ -9,7 +9,7 @@ public class BankAccount : IBankAccount
     private static int s_nextAccountNumber;
     protected double priorBalance;
 
-    // Task 4: Step 3 - define a private readonly list to store transactions
+    private readonly List<Transaction> _transactions;
 
     public static double TransactionRate { get; private set; }
     public static double MaxTransactionFee { get; private set; }
@@ -24,7 +24,7 @@ public class BankAccount : IBankAccount
 
     public virtual double InterestRate { get; protected set; }
 
-    // Task 4: Step 4 - Add a readonly Transactions property
+    public IReadOnlyList<Transaction> Transactions => _transactions.AsReadOnly();
 
     static BankAccount()
     {
@@ -43,8 +43,7 @@ public class BankAccount : IBankAccount
         CustomerId = customerIdNumber;
         Balance = balance;
         AccountType = accountType;
-
-        // Task 4: Step 5a - Initialize the transactions list
+        _transactions = [];
     }
 
     // Copy constructor for BankAccount
@@ -55,11 +54,19 @@ public class BankAccount : IBankAccount
         CustomerId = existingAccount.CustomerId;
         Balance = existingAccount.Balance;
         AccountType = existingAccount.AccountType;
-
-        // Task 4: Step 5b - Initialize the transactions list
+        _transactions = [.. existingAccount._transactions];
     }
 
-    // TASK 4: Step 6 - Implement AddTransaction and GetAllTransactions methods
+    public void AddTransaction(Transaction transaction)
+    {
+        _transactions.Add(transaction);
+    }
+
+    // Method to return all transactions for the account
+    public List<Transaction> GetAllTransactions()
+    {
+        return _transactions;
+    }
 
     // Method to deposit money into the account
     public virtual void Deposit(double amount, DateOnly transactionDate, TimeOnly transactionTime, string description)
@@ -79,8 +86,7 @@ public class BankAccount : IBankAccount
                 transactionType = "Bank Refund";
             }
 
-            // TASK 4: Step 7a - Add logic to log the deposit transaction
-
+            AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, amount, AccountNumber, AccountNumber, transactionType, description));
         }
     }
 
@@ -102,7 +108,7 @@ public class BankAccount : IBankAccount
                 transactionType = "Bank Fee";
             }
 
-            // TASK 4: Step 7b - Add logic to log the withdrawal transaction
+            AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, amount, AccountNumber, AccountNumber, transactionType, description));
 
             return true;
         }
@@ -131,7 +137,7 @@ public class BankAccount : IBankAccount
         double interest = AccountCalculations.CalculateCompoundInterest(Balance, InterestRate, years);
         Balance += interest;
 
-        // TASK 4: Step 7c - Add logic to log the interest transaction
+        AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, interest, AccountNumber, AccountNumber, AccountType, "Interest"));
     }
 
     // Method to issue a cashier's check
@@ -144,7 +150,8 @@ public class BankAccount : IBankAccount
             double fee = AccountCalculations.CalculateTransactionFee(amount, TransactionRate, MaxTransactionFee);
             Balance -= fee;
 
-            // TASK 4: Step 7e - Add logic to log the cashier's check transaction
+            AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, amount, AccountNumber, AccountNumber, AccountType, "Cashier's Check"));
+            AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, fee, AccountNumber, AccountNumber, AccountType, "Transaction Fee"));
 
             return true;
         }
@@ -158,7 +165,7 @@ public class BankAccount : IBankAccount
         priorBalance = Balance;
         Balance += refund;
 
-        // TASK 4: Step 7d - Add logic to log the refund transaction
+        AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, refund, AccountNumber, AccountNumber, AccountType, "Refund"));
     }
 
     // Method to display account information

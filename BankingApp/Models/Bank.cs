@@ -7,11 +7,20 @@ namespace BankingApp.Models;
 
 public class Bank
 {
-    // TASK 2: Step 1 - Add bank's unique identifier and customers list
+    private readonly Guid _bankId;
+    private readonly List<BankCustomer> _customers;
 
+    public Guid BankId => _bankId;
+    public IReadOnlyList<BankCustomer> Customers => _customers.AsReadOnly();
 
-    // TASK 2: Step 2 - Add constructor to initialize properties
+    public Bank()
+    {
+        _bankId = Guid.NewGuid();
+        _customers = [];
+    }
 
-
-    // TASK 2: Step 3 - Implement AddCustomer method
+    internal void AddCustomer(BankCustomer customer)
+    {
+        _customers.Add(customer);
+    }
 }
