@@ -24,8 +24,6 @@ public class SimulateDepositsWithdrawalsTransfers
         {
             DateOnly lastDayOfMonth = new(startYear, startMonth, DateTime.DaysInMonth(startYear, startMonth));
             bankCustomer = SimulateActivityForPeriod(startDate, lastDayOfMonth, bankCustomer);
-
-            // Update the currentDate to the first day of the next month
             currentDate = lastDayOfMonth.AddDays(1);
         }
 
@@ -93,6 +91,7 @@ public class SimulateDepositsWithdrawalsTransfers
         List<TransactionInfo> transactions = [];
 
         DateOnly dateMiddleWeekday = new(startDate.Year, startDate.Month, 14);
+
         if (dateMiddleWeekday.DayOfWeek == DayOfWeek.Saturday)
         {
             dateMiddleWeekday = dateMiddleWeekday.AddDays(2);
@@ -103,6 +102,7 @@ public class SimulateDepositsWithdrawalsTransfers
         }
 
         DateOnly dateFinalWeekday = new(endDate.Year, endDate.Month, DateTime.DaysInMonth(endDate.Year, endDate.Month));
+
         if (dateFinalWeekday.DayOfWeek == DayOfWeek.Saturday)
         {
             dateFinalWeekday = dateFinalWeekday.AddDays(-1);
@@ -117,6 +117,7 @@ public class SimulateDepositsWithdrawalsTransfers
         {
             transactions.Add(new TransactionInfo { Date = dateMiddleWeekday, Time = new TimeOnly(12, 00), Amount = semiMonthlyPaycheck, Description = "Bi-monthly salary deposit", TransactionType = "Deposit" });
         }
+
         if (dateFinalWeekday >= startDate && dateFinalWeekday <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = dateFinalWeekday, Time = new TimeOnly(12, 00), Amount = semiMonthlyPaycheck, Description = "Bi-monthly salary deposit", TransactionType = "Deposit" });
@@ -129,10 +130,12 @@ public class SimulateDepositsWithdrawalsTransfers
         }
 
         DateOnly saturday1 = new(startDate.Year, startDate.Month, 1);
+
         while (saturday1.DayOfWeek != DayOfWeek.Saturday)
         {
             saturday1 = saturday1.AddDays(1);
         }
+
         DateOnly saturday2 = saturday1.AddDays(7);
         DateOnly saturday3 = saturday2.AddDays(7);
         DateOnly saturday4 = saturday3.AddDays(7);
@@ -141,20 +144,24 @@ public class SimulateDepositsWithdrawalsTransfers
         {
             transactions.Add(new TransactionInfo { Date = saturday1, Time = new TimeOnly(21, 00), Amount = entertainment1, Description = "Debit card purchase", TransactionType = "Withdraw" });
         }
+
         if (saturday2 >= startDate && saturday2 <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = saturday2, Time = new TimeOnly(21, 00), Amount = entertainment2, Description = "Debit card purchase", TransactionType = "Withdraw" });
         }
+
         if (saturday3 >= startDate && saturday3 <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = saturday3, Time = new TimeOnly(21, 00), Amount = entertainment3, Description = "Debit card purchase", TransactionType = "Withdraw" });
         }
+
         if (saturday4 >= startDate && saturday4 <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = saturday4, Time = new TimeOnly(21, 00), Amount = entertainment4, Description = "Debit card purchase", TransactionType = "Withdraw" });
         }
 
         DateOnly billPayDate = new(startDate.Year, startDate.Month, 20);
+
         if (billPayDate >= startDate && billPayDate <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = billPayDate, Time = new TimeOnly(12, 00), Amount = monthlyGasElectric, Description = "Auto-pay gas and electric bill", TransactionType = "Withdraw" });
@@ -164,10 +171,12 @@ public class SimulateDepositsWithdrawalsTransfers
         }
 
         DateOnly monday1 = new(startDate.Year, startDate.Month, 1);
+
         while (monday1.DayOfWeek != DayOfWeek.Monday)
         {
             monday1 = monday1.AddDays(1);
         }
+
         DateOnly monday2 = monday1.AddDays(7);
         DateOnly monday3 = monday2.AddDays(7);
         DateOnly monday4 = monday3.AddDays(7);
@@ -177,14 +186,17 @@ public class SimulateDepositsWithdrawalsTransfers
         {
             transactions.Add(new TransactionInfo { Date = monday1, Time = new TimeOnly(8, 00), Amount = weeklyCash, Description = "Withdraw for expenses", TransactionType = "Withdraw" });
         }
+
         if (monday2 >= startDate && monday2 <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = monday2, Time = new TimeOnly(8, 00), Amount = weeklyCash, Description = "Withdraw for expenses", TransactionType = "Withdraw" });
         }
+
         if (monday3 >= startDate && monday3 <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = monday3, Time = new TimeOnly(8, 00), Amount = weeklyCash, Description = "Withdraw for expenses", TransactionType = "Withdraw" });
         }
+
         if (monday4 >= startDate && monday4 <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = monday4, Time = new TimeOnly(8, 00), Amount = weeklyCash, Description = "Withdraw for expenses", TransactionType = "Withdraw" });
@@ -196,6 +208,7 @@ public class SimulateDepositsWithdrawalsTransfers
         }
 
         DateOnly refundDate = new(startDate.Year, startDate.Month, 5);
+
         if (refundDate >= startDate && refundDate <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = refundDate, Time = new TimeOnly(12, 00), Amount = 100.00, Description = "Refund for overcharge -(BANK REFUND)", TransactionType = "Deposit" });
@@ -203,10 +216,12 @@ public class SimulateDepositsWithdrawalsTransfers
 
         DateOnly feeDate1 = new(startDate.Year, startDate.Month, 3);
         DateOnly feeDate2 = new(startDate.Year, startDate.Month, 10);
+
         if (feeDate1 >= startDate && feeDate1 <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = feeDate1, Time = new TimeOnly(12, 00), Amount = 50.00, Description = "-(BANK FEE)", TransactionType = "Withdraw" });
         }
+
         if (feeDate2 >= startDate && feeDate2 <= endDate)
         {
             transactions.Add(new TransactionInfo { Date = feeDate2, Time = new TimeOnly(12, 00), Amount = 50.00, Description = "-(BANK FEE)", TransactionType = "Withdraw" });
@@ -309,7 +324,6 @@ public class SimulateDepositsWithdrawalsTransfers
 
         return monthlyExpenses;
     }
-
 }
 
 public class TransactionInfo : IComparable<TransactionInfo>
@@ -322,12 +336,18 @@ public class TransactionInfo : IComparable<TransactionInfo>
 
     public int CompareTo(TransactionInfo? other)
     {
-        if (other == null) return 1;
+        if (other == null)
+        {
+            return 1;
+        }
+
         int dateComparison = Date.CompareTo(other.Date);
+
         if (dateComparison == 0)
         {
             return Time.CompareTo(other.Time);
         }
+        
         return dateComparison;
     }
 }

@@ -13,58 +13,75 @@ public class AccountReportGenerator : IMonthlyReportGenerator, IQuarterlyReportG
         _account = account;
     }
 
-    public void GenerateMonthlyReport(Transaction[] transactions, DateOnly reportDate)
+    public void GenerateMonthlyReport(BankCustomer bankCustomer, int accountNumber, DateOnly reportDate)
     {
-        Console.WriteLine($"Generating the {reportDate:MMMM} {reportDate.Year} report for account: {_account.AccountNumber}");
 
-        Console.WriteLine($"Account Number: {_account.AccountNumber}");
-        Console.WriteLine($"Account Type: {_account.AccountType}");
-        Console.WriteLine($"Account Balance: {_account.Balance}");
-
-        // Generating monthly report based on transaction history
-        foreach (var transaction in transactions)
+        foreach (BankAccount account in bankCustomer.Accounts.Cast<BankAccount>())
         {
-            try
+            if (account.AccountNumber == accountNumber)
             {
-                if (transaction.TransactionDate.Month == reportDate.Month && transaction.TransactionDate.Year == reportDate.Year)
+                Console.WriteLine($"\nGenerating the {reportDate:MMMM} {reportDate.Year} report for {account.AccountType} account: {account.AccountNumber}");
+
+                Console.WriteLine($"Account Number: {account.AccountNumber}");
+                Console.WriteLine($"Account Type: {account.AccountType}");
+
+                foreach (var transaction in account.Transactions)
                 {
-                    Console.WriteLine($"{transaction.ReturnTransaction()}");
+                    if (transaction.TransactionDate.Month == reportDate.Month && transaction.TransactionDate.Year == reportDate.Year)
+                    {
+                        if (transaction.TransactionDate.Day == 1)
+                        {
+                            double getBalance = transaction.PriorBalance;
+                            Console.WriteLine($"Starting Balance on {transaction.TransactionDate}: {getBalance:C}\n");
+                        }
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
+
+                foreach (var transaction in account.Transactions)
+                {
+                    try
+                    {
+                        if (transaction.TransactionDate.Month == reportDate.Month && transaction.TransactionDate.Year == reportDate.Year)
+                        {
+                            Console.WriteLine($"{transaction.ReturnTransaction()}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        string errorMessage = ex.Message;
+                    }
+                }
             }
         }
     }
 
-    public void GenerateCurrentMonthToDateReport(Transaction[] transactions, DateOnly endDate)
+    public void GenerateCurrentMonthToDateReport(BankCustomer bankCustomer, int accountNumber, DateOnly endDate)
     {
-        Console.WriteLine($"Generating current month-to-date report for {_account.AccountType} account number: {_account.AccountNumber}");
+        Console.WriteLine($"\nGenerating current month-to-date report for account: {_account.AccountNumber}");
     }
 
-    public void GeneratePrevious30DayReport(Transaction[] transactions, DateOnly endDate)
+    public void GeneratePrevious30DayReport(BankCustomer bankCustomer, int accountNumber, DateOnly endDate)
     {
-        Console.WriteLine($"Generating previous 30 days report for {_account.AccountType} account number: {_account.AccountNumber}");
+        Console.WriteLine($"Generating previous 30 days report for account: {_account.AccountNumber}");
     }
 
-    public void GenerateQuarterlyReport(Transaction[] transactions, DateOnly reportDate)
+    public void GenerateQuarterlyReport(BankCustomer bankCustomer, int accountNumber, DateOnly reportDate)
     {
-        Console.WriteLine($"Generating quarterly report for {_account.AccountType} account number: {_account.AccountNumber}");
+        Console.WriteLine($"Generating quarterly report for account: {_account.AccountNumber}");
     }
 
-    public void GeneratePreviousYearReport(Transaction[] transactions, DateOnly reportDate)
+    public void GeneratePreviousYearReport(BankCustomer bankCustomer, int accountNumber, DateOnly reportDate)
     {
-        Console.WriteLine($"Generating previous year report for {_account.AccountType} account number: {_account.AccountNumber}");
+        Console.WriteLine($"Generating previous year report for account: {_account.AccountNumber}");
     }
 
-    public void GenerateCurrentYearToDateReport(Transaction[] transactions, DateOnly endDate)
+    public void GenerateCurrentYearToDateReport(BankCustomer bankCustomer, int accountNumber, DateOnly endDate)
     {
-        Console.WriteLine($"Generating current year-to-date report for {_account.AccountType} account number: {_account.AccountNumber}");
+        Console.WriteLine($"Generating current year-to-date report for account: {_account.AccountNumber}");
     }
 
-    public void GenerateLast365DaysReport(Transaction[] transactions, DateOnly endDate)
+    public void GenerateLast365DaysReport(BankCustomer bankCustomer, int accountNumber, DateOnly endDate)
     {
-        Console.WriteLine($"Generating last 365 days report for {_account.AccountType} account number: {_account.AccountNumber}");
+        Console.WriteLine($"Generating last 365 days report for account: {_account.AccountNumber}");
     }
 }

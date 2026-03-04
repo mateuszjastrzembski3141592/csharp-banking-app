@@ -129,6 +129,7 @@ public static class SimulateTransactions
             transactions[transactionIndex++] = new Transaction(middleOfMonth, new TimeOnly(12, 00), runningBalance1, semiMonthlyPaycheck, account1.AccountNumber, account1.AccountNumber, "Deposit", "Bi-monthly salary deposit");
             runningBalance1 += semiMonthlyPaycheck;
         }
+
         if (endOfMonth >= startDate && endOfMonth <= endDate)
         {
             transactions[transactionIndex++] = new Transaction(endOfMonth, new TimeOnly(12, 00), runningBalance1, semiMonthlyPaycheck, account1.AccountNumber, account1.AccountNumber, "Deposit", "Bi-monthly salary deposit");
@@ -147,10 +148,12 @@ public static class SimulateTransactions
         }
 
         DateOnly saturday1 = new(startDate.Year, startDate.Month, 1);
+
         while (saturday1.DayOfWeek != DayOfWeek.Saturday)
         {
             saturday1 = saturday1.AddDays(1);
         }
+
         DateOnly saturday2 = saturday1.AddDays(7);
         DateOnly saturday3 = saturday2.AddDays(7);
         DateOnly saturday4 = saturday3.AddDays(7);
@@ -160,16 +163,19 @@ public static class SimulateTransactions
             transactions[transactionIndex++] = new Transaction(saturday1, new TimeOnly(21, 00), runningBalance1, entertainment1, account1.AccountNumber, account1.AccountNumber, "Withdraw", "Debit card purchase");
             runningBalance1 -= entertainment1;
         }
+
         if (saturday2 >= startDate && saturday2 <= endDate)
         {
             transactions[transactionIndex++] = new Transaction(saturday2, new TimeOnly(21, 00), runningBalance1, entertainment2, account1.AccountNumber, account1.AccountNumber, "Withdraw", "Debit card purchase");
             runningBalance1 -= entertainment2;
         }
+
         if (saturday3 >= startDate && saturday3 <= endDate)
         {
             transactions[transactionIndex++] = new Transaction(saturday3, new TimeOnly(21, 00), runningBalance1, entertainment3, account1.AccountNumber, account1.AccountNumber, "Withdraw", "Debit card purchase");
             runningBalance1 -= entertainment3;
         }
+
         if (saturday4 >= startDate && saturday4 <= endDate)
         {
             transactions[transactionIndex++] = new Transaction(saturday4, new TimeOnly(21, 00), runningBalance1, entertainment4, account1.AccountNumber, account1.AccountNumber, "Withdraw", "Debit card purchase");
@@ -177,6 +183,7 @@ public static class SimulateTransactions
         }
 
         DateOnly billDate = new(startDate.Year, startDate.Month, 20);
+
         if (billDate >= startDate && billDate <= endDate)
         {
             transactions[transactionIndex++] = new Transaction(billDate, new TimeOnly(12, 00), runningBalance1, monthlyGasElectric, account1.AccountNumber, account1.AccountNumber, "Withdraw", "Auto-pay gas and electric bill");
@@ -190,10 +197,12 @@ public static class SimulateTransactions
         }
 
         DateOnly monday1 = new(startDate.Year, startDate.Month, 1);
+
         while (monday1.DayOfWeek != DayOfWeek.Monday)
         {
             monday1 = monday1.AddDays(1);
         }
+
         DateOnly monday2 = monday1.AddDays(7);
         DateOnly monday3 = monday2.AddDays(7);
         DateOnly monday4 = monday3.AddDays(7);
@@ -205,16 +214,19 @@ public static class SimulateTransactions
             transactions[transactionIndex++] = new Transaction(monday1, new TimeOnly(9, 00), runningBalance1, weeklyCash, account1.AccountNumber, account1.AccountNumber, "Withdraw", "Withdraw for expenses");
             runningBalance1 -= weeklyCash;
         }
+
         if (monday2 >= startDate && monday2 <= endDate)
         {
             transactions[transactionIndex++] = new Transaction(monday2, new TimeOnly(9, 00), runningBalance1, weeklyCash, account1.AccountNumber, account1.AccountNumber, "Withdraw", "Withdraw for expenses");
             runningBalance1 -= weeklyCash;
         }
+
         if (monday3 >= startDate && monday3 <= endDate)
         {
             transactions[transactionIndex++] = new Transaction(monday3, new TimeOnly(9, 00), runningBalance1, weeklyCash, account1.AccountNumber, account1.AccountNumber, "Withdraw", "Withdraw for expenses");
             runningBalance1 -= weeklyCash;
         }
+        
         if (monday4 >= startDate && monday4 <= endDate)
         {
             transactions[transactionIndex++] = new Transaction(monday4, new TimeOnly(9, 00), runningBalance1, weeklyCash, account1.AccountNumber, account1.AccountNumber, "Withdraw", "Withdraw for expenses");
@@ -229,6 +241,7 @@ public static class SimulateTransactions
 
         DateOnly refundDate = new(startDate.Year, startDate.Month, 5);
         double refundAmount = 100.00;
+
         if (refundDate >= startDate && refundDate <= endDate)
         {
             transactions[transactionIndex++] = new Transaction(refundDate, new TimeOnly(12, 00), runningBalance1, refundAmount, account2.AccountNumber, account1.AccountNumber, "Refund", "Refund for overcharge");
@@ -245,6 +258,7 @@ public static class SimulateTransactions
             transactions[transactionIndex++] = new Transaction(feeDate1, new TimeOnly(12, 00), runningBalance1, bankFeeAmount, account1.AccountNumber, account1.AccountNumber, "Fee", "Monthly fee");
             runningBalance1 -= bankFeeAmount;
         }
+        
         if (feeDate2 >= startDate && feeDate2 <= endDate)
         {
             transactions[transactionIndex++] = new Transaction(feeDate2, new TimeOnly(12, 00), runningBalance1, bankFeeAmount, account1.AccountNumber, account1.AccountNumber, "Fee", "Monthly fee");
@@ -252,7 +266,7 @@ public static class SimulateTransactions
         }
 
         // Return only the populated portion of the array
-        return transactions.Take(transactionIndex).ToArray();
+        return [.. transactions.Take(transactionIndex)];
 
         static double[] ReturnMonthlyExpenses()
         {

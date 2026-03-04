@@ -34,26 +34,44 @@ public class CheckingAccount : BankAccount
 
         if (result == false && !description.Contains("-(TRANSFER)"))
         {
-            double overdraftFee = AccountCalculations.CalculateOverdraftFee(Math.Abs(Balance), BankAccount.OverdraftRate, BankAccount.MaxOverdraftFee);
-
-            if (Balance + OverdraftLimit + overdraftFee >= amount)
+            if (Owner.IsPremiumCustomer() == true)
             {
                 priorBalance = Balance;
                 Balance -= amount;
-                string transactionType = "Withdraw";
 
+                string transactionType = "Withdraw";
                 AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, amount, AccountNumber, AccountNumber, transactionType, description));
 
-                priorBalance = Balance;
-                Balance -= overdraftFee;
-                transactionType = "Bank Fee";
-                string overdraftDescription = "Overdraft fee applied";
+                BankAccount savingsAccount = (SavingsAccount)Owner.Accounts[1];
+                BankAccount checkingAccount = (CheckingAccount)Owner.Accounts[0];
 
-                AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, overdraftFee, AccountNumber, AccountNumber, transactionType, overdraftDescription));
+                string transferDescription = "free overdraft protection-(TRANSFER)";
+                savingsAccount.Transfer(checkingAccount, amount + 1000.00, transactionDate, transactionTime, transferDescription);
 
                 return true;
             }
+            else
+            {
+                double overdraftFee = AccountCalculations.CalculateOverdraftFee(Math.Abs(Balance), OverdraftRate, MaxOverdraftFee);
 
+                if (Balance + OverdraftLimit + overdraftFee >= amount)
+                {
+                    priorBalance = Balance;
+                    Balance -= amount;
+
+                    string transactionType = "Withdraw";
+                    AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, amount, AccountNumber, AccountNumber, transactionType, description));
+
+                    priorBalance = Balance;
+                    Balance -= overdraftFee;
+                    
+                    transactionType = "Bank Fee";
+                    string overdraftDescription = "Overdraft fee applied";
+                    AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, overdraftFee, AccountNumber, AccountNumber, transactionType, overdraftDescription));
+
+                    return true;
+                }
+            }
         }
 
         return result;

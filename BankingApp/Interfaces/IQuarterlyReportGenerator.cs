@@ -5,5 +5,5 @@ namespace BankingApp.Interfaces;
 
 public interface IQuarterlyReportGenerator
 {
-    void GenerateQuarterlyReport(Transaction[] transactions, DateOnly reportDate);
+    void GenerateQuarterlyReport(BankCustomer bankCustomer, int accountNumber, DateOnly reportDate);
 }
