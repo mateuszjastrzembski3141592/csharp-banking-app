@@ -57,9 +57,16 @@ public class BankAccount : IBankAccount
         _transactions = [.. existingAccount._transactions];
     }
 
+    // Method to add a transaction to the account
     public void AddTransaction(Transaction transaction)
     {
         _transactions.Add(transaction);
+    }
+
+    // Method to remove a transaction from the account
+    public void RemoveTransaction(Transaction transaction)
+    {
+        _transactions.Remove(transaction);
     }
 
     // Method to return all transactions for the account

@@ -17,4 +17,8 @@ public interface IBankCustomer
     void ApplyBenefits();
 
     void AddAccount(IBankAccount account);
+    void RemoveAccount(IBankAccount account);
+
+    IEnumerable<IBankAccount> GetAllAccounts();
+    IEnumerable<IBankAccount> GetAccountsByType(string accountType);
 }
