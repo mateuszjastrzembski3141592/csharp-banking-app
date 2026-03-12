@@ -8,6 +8,11 @@ public class StandardCustomer : BankCustomer
     {
     }
 
+    public StandardCustomer(string firstName, string lastName, string customerId, Bank bank)
+        : base(firstName, lastName, customerId, bank)
+    {
+    }
+
     public override bool IsPremiumCustomer() => false;
 
     public override void ApplyBenefits()

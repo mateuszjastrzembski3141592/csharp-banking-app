@@ -9,6 +9,7 @@ public interface IBankAccount
     string CustomerId { get; }
     double Balance { get; }
     string AccountType { get; }
+    double InterestRate { get; }
     BankCustomer Owner { get; }
 
     IReadOnlyList<Transaction> Transactions { get; }
