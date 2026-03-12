@@ -6,25 +6,75 @@ namespace BankingApp.Models;
 public class Transaction
 {
     // TODO: Refactor to use auto-properties
-    private readonly Guid _transactionId;
-    private readonly string _transactionType;
-    private readonly DateOnly _transactionDate;
-    private readonly TimeOnly _transactionTime;
-    private readonly double _priorBalance;
-    private readonly double _transactionAmount;
-    private readonly int _sourceAccountNumber;
-    private readonly int _targetAccountNumber;
-    private readonly string _description;
+    private Guid _transactionId;
+    private string _transactionType;
+    private DateOnly _transactionDate;
+    private TimeOnly _transactionTime;
+    private double _priorBalance;
+    private double _transactionAmount;
+    private int _sourceAccountNumber;
+    private int _targetAccountNumber;
+    private string _description;
 
-    public Guid TransactionId => _transactionId;
-    public string TransactionType => _transactionType;
-    public DateOnly TransactionDate => _transactionDate;
-    public TimeOnly TransactionTime => _transactionTime;
-    public double PriorBalance => _priorBalance;
-    public double TransactionAmount => _transactionAmount;
-    public int SourceAccountNumber => _sourceAccountNumber;
-    public int TargetAccountNumber => _targetAccountNumber;
-    public string Description => _description;
+    public Guid TransactionId
+    {
+        get => _transactionId;
+        set => _transactionId = value;
+    }
+
+    public string TransactionType
+    {
+        get => _transactionType;
+        set => _transactionType = value;
+    }
+
+    public DateOnly TransactionDate
+    {
+        get => _transactionDate;
+        set => _transactionDate = value;
+    }
+
+    public TimeOnly TransactionTime
+    {
+        get => _transactionTime;
+        set => _transactionTime = value;
+    }
+
+    public double PriorBalance
+    {
+        get => _priorBalance;
+        set => _priorBalance = value;
+    }
+
+    public double TransactionAmount
+    {
+        get => _transactionAmount;
+        set => _transactionAmount = value;
+    }
+
+    public int SourceAccountNumber
+    {
+        get => _sourceAccountNumber;
+        set => _sourceAccountNumber = value;
+    }
+
+    public int TargetAccountNumber
+    {
+        get => _targetAccountNumber;
+        set => _targetAccountNumber = value;
+    }
+
+    public string Description
+    {
+        get => _description;
+        set => _description = value;
+    }
+
+    public Transaction()
+    {
+        _transactionType = "";
+        _description = "";
+    }
 
     public Transaction(DateOnly transactionDate, TimeOnly transactionTime, double priorBalance, double transactionAmount, int sourceAccountNumber, int targetAccountNumber, string transactionType, string description = "")
     {

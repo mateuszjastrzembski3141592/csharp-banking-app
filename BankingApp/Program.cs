@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Text.Json;
 using BankingApp.Interfaces;
 using BankingApp.Models;
 using BankingApp.Services;
@@ -13,312 +14,284 @@ class Program
 {
     static void Main(string[] args)
     {
+        Console.WriteLine("Demonstrate JSON file storage and retrieval using BankCustomer, BankAccount, and Transaction classes");
+
+        Bank bank = new();
+
+        string firstName = "Niki";
+        string lastName = "Demetriou";
+        BankCustomer bankCustomer = new StandardCustomer(firstName, lastName);
+
+        bankCustomer.AddAccount(new CheckingAccount(bankCustomer, bankCustomer.CustomerId, 5000));
+        bankCustomer.AddAccount(new SavingsAccount(bankCustomer, bankCustomer.CustomerId, 15000));
+        bankCustomer.AddAccount(new MoneyMarketAccount(bankCustomer, bankCustomer.CustomerId, 90000));
+
+        bank.AddCustomer(bankCustomer);
+
+        // Simulate one month of transactions for customer
+        DateOnly startDate = new(2025, 2, 1);
+        DateOnly endDate = new(2025, 2, 28);
+        bankCustomer = SimulateDepositsWithdrawalsTransfers.SimulateActivityDateRange(startDate, endDate, bankCustomer);
+
         string currentDirectory = Directory.GetCurrentDirectory();
-        string directoryPath = Path.Combine(currentDirectory, @"Data\SampleDirectory");
-        string subDirectoryPath1 = Path.Combine(directoryPath, "SubDirectory1");
-        string subDirectoryPath2 = Path.Combine(directoryPath, "SubDirectory2");
 
-        string filePath = Path.Combine(directoryPath, "sample.txt");
-        string appendFilePath = Path.Combine(directoryPath, "append.txt");
-        string copyFilePath = Path.Combine(directoryPath, "copy.txt");
-        string moveFilePath = Path.Combine(directoryPath, "moved.txt");
+        string bankLogsDirectoryPath = Path.Combine(currentDirectory, "Data", "BankLogs");
 
-        string filePath2 = Path.Combine(directoryPath, "SubDirectory3", "file2.txt");
-
-        Console.WriteLine($"Directory path: {directoryPath}");
-        Console.WriteLine($"Text file paths ... Sample file path: {filePath}, Append file path: {appendFilePath}, Copy file path: {copyFilePath}, Move file path: {moveFilePath}");
-
-        if (!Directory.Exists(directoryPath))
+        if (!Directory.Exists(bankLogsDirectoryPath))
         {
-            Directory.CreateDirectory(directoryPath);
-            Console.WriteLine($"Created directory: {directoryPath}");
+            Directory.CreateDirectory(bankLogsDirectoryPath);
         }
 
-        if (!Directory.Exists(subDirectoryPath1))
+        // Get the first transaction from the first account of the bank customer
+        Transaction singleTransaction = bankCustomer.Accounts[0].Transactions.ElementAt(0);
+
+        // Serialize the transaction object
+        string transactionJson = JsonSerializer.Serialize(singleTransaction);
+
+        Console.WriteLine($"\nJSON string: {transactionJson}");
+
+        // Convert the JSON string into a Transaction objects
+        Transaction? deserializedTransaction = JsonSerializer.Deserialize<Transaction>(transactionJson);
+
+        if (deserializedTransaction == null)
         {
-            Directory.CreateDirectory(subDirectoryPath1);
-            Console.WriteLine($"Created subdirectory: {subDirectoryPath1}");
-        }
-
-        if (!Directory.Exists(subDirectoryPath2))
-        {
-            Directory.CreateDirectory(subDirectoryPath2);
-            Console.WriteLine($"Created subdirectory: {subDirectoryPath2}");
-        }
-
-        // Use the File class to create a sample file in the root directory
-        File.WriteAllText(filePath, "This is a sample file.");
-
-        // Use the File class to create sample files in the subdirectories
-        File.WriteAllText(Path.Combine(subDirectoryPath1, "file1.txt"), "Content of file1 in SubDirectory1");
-        File.WriteAllText(Path.Combine(subDirectoryPath2, "file2.txt"), "Content of file2 in SubDirectory2");
-
-        Console.WriteLine("\nEnumerating directories and files ...\n");
-
-        // Enumerate the files within a specified root directory
-        foreach (var file in Directory.GetFiles(directoryPath))
-        {
-            Console.WriteLine($"File: {file}");
-        }
-
-        // Enumerate the directories within a specified root directory
-        foreach (var dir in Directory.GetDirectories(directoryPath))
-        {
-            Console.WriteLine($"Directory: {dir}");
-        }
-
-        // Enumerate the files within each subdirectory of the specified root directory
-        foreach (var subDir in Directory.GetDirectories(directoryPath))
-        {
-            foreach (var file in Directory.GetFiles(subDir))
-            {
-                Console.WriteLine($"File: {file}");
-            }
-        }
-
-        Console.WriteLine("\nUse the File class to write and read CSV-formatted text files.");
-
-        string label = "deposits";
-        double[,] depositValues =
-        {
-            { 100.50, 200.75, 300.25 },
-            { 150.00, 250.50, 350.75 },
-            { 175.25, 275.00, 375.50 }
-        };
-
-        StringBuilder sb = new();
-
-        for (int i = 0; i < depositValues.GetLength(0); i++)
-        {
-            sb.AppendLine($"{label}: {depositValues[i, 0]}, {depositValues[i, 1]}, {depositValues[i, 2]}");
-        }
-
-        /* Split the string representation of the StringBuilder object into an array of strings 
-        based on the environment's newline character, removing any empty entries. */
-        string csvString = sb.ToString();
-        string[] csvLines = csvString.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-
-        Console.WriteLine("\nCSV formatted string array:");
-
-        foreach (var line in csvLines)
-        {
-            Console.WriteLine(line);
-        }
-
-        // Write the CSV formatted string array to a text file. The file is created if it doesn't exist, or overwritten if it does. 
-        File.WriteAllText(filePath, csvString);
-
-        // Read the contents of the text file into a string array and display the file contents
-        string[] readLines = File.ReadAllLines(filePath);
-        Console.WriteLine($"\nContent read from the {filePath} file:");
-
-        foreach (var line in readLines)
-        {
-            Console.WriteLine(line);
-        }
-
-        // Append a new line to the text file
-        File.AppendAllText(filePath, "deposits: 215.25, 417, 111.5\r\n");
-
-        // Read and display the updated file contents
-        string[] readUpdatedLines = File.ReadAllLines(filePath);
-
-        Console.WriteLine($"\nContent read from updated the {filePath} file:");
-
-        foreach (var line in readUpdatedLines)
-        {
-            Console.WriteLine(line);
-        }
-
-        // Extract the label and value components from the CSV formatted string
-        string readLabel = readUpdatedLines[0].Split(':')[0];
-        double[,] readDepositValues = new double[readUpdatedLines.Length, 3];
-
-        for (int i = 0; i < readUpdatedLines.Length; i++)
-        {
-            string[] parts = readUpdatedLines[i].Split(':');
-            string[] values = parts[1].Split(',');
-
-            for (int j = 0; j < values.Length; j++)
-            {
-                readDepositValues[i, j] = double.Parse(values[j]);
-            }
-
-        }
-
-        Console.WriteLine($"\nLabel: {readLabel}");
-        Console.WriteLine("Deposit values:");
-
-        for (int i = 0; i < readDepositValues.GetLength(0); i++)
-        {
-            Console.WriteLine($"{readDepositValues[i, 0]:C}, {readDepositValues[i, 1]:C}, {readDepositValues[i, 2]:C}");
-        }
-
-        Console.WriteLine("\nUse the File class to perform file management operations.\n");
-
-        // Check whether the append.txt file exists
-        if (File.Exists(appendFilePath))
-        {
-            Console.WriteLine($"The {appendFilePath} file exists.");
+            Console.WriteLine("Deserialization failed. Check the Transaction class for public setters and a parameterless constructor.");
         }
         else
         {
-            Console.WriteLine($"The {appendFilePath} file does not exist.");
+            Console.WriteLine($"\nDeserialized transaction object: {deserializedTransaction.ReturnTransaction()}");
         }
 
-        // Copy the sample.txt file to the file location defined by the copyFilePath variable
-        File.Copy(filePath, copyFilePath, true);
-        Console.WriteLine($"Copied {filePath} to {copyFilePath}.");
+        // Serialize account transactions
+        string transactionsJson = JsonSerializer.Serialize(bankCustomer.Accounts[0].Transactions);
+        Console.WriteLine($"\nbankCustomer.Accounts[0].Transactions serialized to JSON: \n{transactionsJson}");
 
-        // Move the copy.txt file to the file location defined by the moveFilePath variable
-        File.Move(copyFilePath, moveFilePath, true);
-        Console.WriteLine($"Moved {copyFilePath} to {moveFilePath}");
+        // Construct a file path where the serialized transactions (JSON string) can be stored
+        string transactionsJsonFilePath = Path.Combine(bankLogsDirectoryPath, "Transactions", bankCustomer.Accounts[0].AccountNumber.ToString() + "-transactions" + ".json");
 
-        // Delete the move.txt file
-        if (File.Exists(moveFilePath))
+        // Create the parent directory for the serialized transactions file
+        var directoryPath = Path.GetDirectoryName(transactionsJsonFilePath);
+
+        if (directoryPath != null && !Directory.Exists(directoryPath))
         {
-            File.Delete(moveFilePath);
-            Console.WriteLine($"Deleted file: {moveFilePath}");
+            Directory.CreateDirectory(directoryPath);
         }
 
-        Console.WriteLine("\nUse the StreamWriter and StreamReader classes.\n");
+        // Store the serialized JSON string to a file
+        File.WriteAllText(transactionsJsonFilePath, transactionsJson);
+        Console.WriteLine($"\nSerialized transactions saved to: {transactionsJsonFilePath}");
 
+        // Read the JSON file and assign the text contents to a string
+        string transactionsJsonFromFile = File.ReadAllText(transactionsJsonFilePath);
 
-        // Create a directory path named TransactionLogs
-        string transactionsDirectoryPath = Path.Combine(directoryPath, "TransactionLogs");
+        // Deserialize the JSON string
+        var transactionsJsonDeserialized = JsonSerializer.Deserialize<IEnumerable<Transaction>>(transactionsJsonFromFile);
 
-        if (!Directory.Exists(transactionsDirectoryPath))
+        if (transactionsJsonDeserialized == null)
         {
-            Directory.CreateDirectory(transactionsDirectoryPath);
-            Console.WriteLine($"Created directory: {transactionsDirectoryPath}");
+            Console.WriteLine("Deserialization failed. Check the Transaction class for public setters and a parameterless constructor.");
         }
-
-        // Create a filepath in the TransactionLogs directory for a file named transactions.csv
-        string csvFilePath = Path.Combine(transactionsDirectoryPath, "transactions.csv");
-
-        // Simulate one month of transactions for customer Niki Demetriou
-        string firstName = "Niki";
-        string lastName = "Demetriou";
-        BankCustomer customer = new StandardCustomer(firstName, lastName);
-
-        // Add CheckingAccount, SavingsAccount, and MoneyMarketAccount to the customer object using the customer.CustomerId
-        customer.AddAccount(new CheckingAccount(customer, customer.CustomerId, 5000));
-        customer.AddAccount(new SavingsAccount(customer, customer.CustomerId, 15000));
-        customer.AddAccount(new MoneyMarketAccount(customer, customer.CustomerId, 90000));
-
-        DateOnly startDate = new(2025, 3, 1);
-        DateOnly endDate = new(2025, 3, 31);
-        customer = SimulateDepositsWithdrawalsTransfers.SimulateActivityDateRange(startDate, endDate, customer);
-
-        using (StreamWriter sw = new(csvFilePath))
+        else
         {
-            sw.WriteLine("TransactionId,TransactionType,TransactionDate,TransactionTime,PriorBalance,TransactionAmount,SourceAccountNumber,TargetAccountNumber,Description");
+            Console.WriteLine("\nDeserialized transactions:");
 
-            Console.WriteLine("\nSimulated transactions:\n");
-            foreach (var account in customer.Accounts)
+            foreach (var transaction in transactionsJsonDeserialized)
             {
-                foreach (var transaction in account.Transactions)
+                Console.WriteLine(transaction.ReturnTransaction());
+            }
+        }
+
+        // Configure JsonSerializerOptions
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve // Handle circular references
+        };
+
+        // Serialize the CheckingAccount object
+        string accountJson = JsonSerializer.Serialize(bankCustomer.Accounts[0], options);
+        Console.WriteLine(accountJson);
+
+        // Create a file path for the CheckingAccount object
+        string accountFilePath = Path.Combine(bankLogsDirectoryPath, "Account", bankCustomer.Accounts[0].AccountNumber + ".json");
+
+        // Create the parent directory for the serialized account file
+        var accountDirectoryPath = Path.GetDirectoryName(accountFilePath);
+
+        if (accountDirectoryPath != null && !Directory.Exists(accountDirectoryPath))
+        {
+            Directory.CreateDirectory(accountDirectoryPath);
+        }
+
+        // Save the JSON to a file
+        File.WriteAllText(accountFilePath, accountJson);
+        Console.WriteLine($"Serialized account saved to: {accountFilePath}");
+
+        string accountJsonFromFile = File.ReadAllText(accountFilePath);
+
+        // Deserialize the JSON string
+        try
+        {
+            BankAccount? deserializedAccount = JsonSerializer.Deserialize<BankAccount>(accountJsonFromFile, options);
+
+            // Demonstrate the deserialized BankAccount object
+            if (deserializedAccount == null)
+            {
+                Console.WriteLine("Deserialization failed. Check the BankAccount class for public setters and a parameterless constructor.");
+            }
+            else
+            {
+                Console.WriteLine($"\nDeserialized BankAccount object: {deserializedAccount.DisplayAccountInfo()}");
+                Console.WriteLine($"Transactions for Account Number: {deserializedAccount.AccountNumber}");
+
+                foreach (var transaction in deserializedAccount.Transactions)
                 {
-                    Console.WriteLine($"{transaction.TransactionId},{transaction.TransactionType},{transaction.TransactionDate},{transaction.TransactionTime},{transaction.PriorBalance:F2},{transaction.TransactionAmount:F2},{transaction.SourceAccountNumber},{transaction.TargetAccountNumber},{transaction.Description}");
-                    sw.WriteLine($"{transaction.TransactionId},{transaction.TransactionType},{transaction.TransactionDate},{transaction.TransactionTime},{transaction.PriorBalance:F2},{transaction.TransactionAmount:F2},{transaction.SourceAccountNumber},{transaction.TargetAccountNumber},{transaction.Description}");
+                    Console.WriteLine(transaction.ReturnTransaction());
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            string displayMessage = "Exception has occurred: " + ex.Message.Split('.')[0] + ".";
+            displayMessage += "\n\nConsider using Data Transfer Objects (DTOs) for serializing and deserializing complex and nested objects.";
+            Console.WriteLine(displayMessage);
+        }
+
+        // Create directory paths for Account and Transaction files
+        string accountsDirectoryPath = Path.Combine(bankLogsDirectoryPath, "Accounts");
+        Directory.CreateDirectory(accountsDirectoryPath);
+
+        string transactionsDirectory = Path.Combine(bankLogsDirectoryPath, "Transactions");
+        Directory.CreateDirectory(transactionsDirectory);
+
+        BankAccount customerAccount1 = (BankAccount)bankCustomer.Accounts[0];
+
+        // Create a jsonAccountDTOFilePath for the BankAccount object
+        string jsonAccountDTOFilePath = Path.Combine(accountsDirectoryPath, customerAccount1.AccountNumber.ToString() + ".json");
+
+        // Create a bankAccountDTO object from the BankAccount object and serialize it as JSON
+        BankAccountDTO bankAccountDTO = BankAccountDTO.MapToDTO(customerAccount1);
+        string jsonAccountDTO = JsonSerializer.Serialize(bankAccountDTO, options);
+
+        // Save the serialized jsonAccountDTO to a file in the Accounts directory
+        File.WriteAllText(jsonAccountDTOFilePath, jsonAccountDTO);
+        Console.WriteLine($"\nSerialized account saved to: {jsonAccountDTOFilePath}");
+
+        // Serialize the Transactions collection
+        string jsonTransactions = JsonSerializer.Serialize(customerAccount1.Transactions);
+
+        // Create a jsonTransactionsFilePath for the Transactions collection
+        string jsonTransactionsFilePath = Path.Combine(transactionsDirectory, customerAccount1.AccountNumber.ToString() + "T" + ".json");
+
+        // Save the serialized transaction to a file in the Transactions directory 
+        File.WriteAllText(jsonTransactionsFilePath, jsonTransactions);
+        Console.WriteLine($"Serialized account transactions saved to: {jsonTransactionsFilePath}");
+
+        // Load the BankAccountDTO info from the JSON file
+        jsonAccountDTO = File.ReadAllText(jsonAccountDTOFilePath);
+
+        // Deserialize the JSON string into a BankAccountDTO object
+        var accountDTO = JsonSerializer.Deserialize<BankAccountDTO>(jsonAccountDTO, options);
+
+        if (accountDTO == null)
+        {
+            Console.WriteLine("Deserialization failed. Check the BankAccountDTO class for public setters and a parameterless constructor.");
+        }
+        else
+        {
+            // Create a bank account using the recovered data
+            var recoveredBankAccount = new BankAccount(bankCustomer, bankCustomer.CustomerId, accountDTO.Balance, accountDTO.AccountType);
+
+            // Load the transactions file into a JSON formatted string
+            jsonTransactions = File.ReadAllText(jsonTransactionsFilePath);
+
+            // Deserialize the JSON string into a collection of Transaction objects
+            var transactions = JsonSerializer.Deserialize<IEnumerable<Transaction>>(jsonTransactions, options);
+
+            if (transactions == null)
+            {
+                Console.WriteLine("Deserialization failed. Check the Transaction class for public setters and a parameterless constructor.");
+            }
+            else
+            {
+                // Add the transactions to the recovered account
+                foreach (var transaction in transactions)
+                {
+                    recoveredBankAccount.AddTransaction(transaction);
+                }
+
+                // Display the recovered account information
+                Console.WriteLine($"\nRecovered BankAccount object: {recoveredBankAccount.DisplayAccountInfo()}");
+                Console.WriteLine($"Transactions for Account Number: {recoveredBankAccount.AccountNumber}\n");
+
+                foreach (var transaction in recoveredBankAccount.Transactions)
+                {
+                    Console.WriteLine(transaction.ReturnTransaction());
                 }
             }
         }
 
-        // Read the transaction data from the transactions.csv file
-        using (StreamReader sr = new(csvFilePath))
-        {
-            string? headerLine = sr.ReadLine(); // Read the header line
-            Console.WriteLine("\nTransaction data read from the CSV file:\n");
-            string? line;
+        // Get the customer's checking account
+        BankAccount checkingAccount = (CheckingAccount)bankCustomer.Accounts[0];
 
-            while ((line = sr.ReadLine()) != null)
-            {
-                Console.WriteLine(line);
-            }
+        // Save account info to JSON files
+        JsonStorage.SaveBankAccount(checkingAccount, bankLogsDirectoryPath);
+
+        // Construct the file path for the checking account
+        string retrieveAccountFilePath = JsonRetrieval.ReturnAccountFilePath(bankLogsDirectoryPath, checkingAccount.AccountNumber);
+
+        // Use the JsonStorage.LoadBankAccount method to load account info from JSON files (an account file using BankAccountDTO and a separate transactions file)
+        BankAccount retrievedAccount = JsonRetrieval.LoadBankAccount(retrieveAccountFilePath, transactionsDirectory, bankCustomer);
+
+        // Display the retrieved account information
+        Console.WriteLine($"The owner of the retrieved account is: {retrievedAccount.Owner.ReturnFullName()}");
+        Console.WriteLine($"{retrievedAccount.Owner.ReturnFullName()} has the following {retrievedAccount.Owner.Accounts.Count} accounts:");
+
+        foreach (var account in retrievedAccount.Owner.Accounts)
+        {
+            Console.WriteLine($"Account number: {account.AccountNumber} is a {account.AccountType} account.");
         }
 
-        // Use the FileStream class to perform low-level file I/O operations
+        Console.WriteLine($"\nRetrieved {retrievedAccount.AccountType} account info: {retrievedAccount.DisplayAccountInfo()}");
 
-        // Create a filepath for the filestream.txt file
-        string fileStreamPath = Path.Combine(directoryPath, "filestream.txt");
+        Console.WriteLine($"The following transactions were retrieved for {retrievedAccount.Owner.ReturnFullName()}'s {retrievedAccount.AccountType} account: \n");
 
-        // Prepare transaction data from customer accounts
-        sb.AppendLine("TransactionId,TransactionType,TransactionDate,TransactionTime,PriorBalance,TransactionAmount,SourceAccountNumber,TargetAccountNumber,Description");
-
-        foreach (var account in customer.Accounts)
+        foreach (var transaction in retrievedAccount.Transactions)
         {
+            Console.WriteLine(transaction.ReturnTransaction());
+        }
+
+
+        string customersDirectoryPath = Path.Combine(bankLogsDirectoryPath, "Customers");
+        Directory.CreateDirectory(customersDirectoryPath);
+
+        JsonStorage.SaveBankCustomer(bankCustomer, bankLogsDirectoryPath);
+        Console.WriteLine($"\nBank customer information for {bankCustomer.ReturnFullName()} backed up to JSON files.");
+
+        // Delete the customer and then start the recovery process
+        bank.RemoveCustomer(bankCustomer);
+
+        string customerFilePath = Path.Combine(customersDirectoryPath, bankCustomer.CustomerId + ".json");
+
+        BankCustomer retrievedCustomer = JsonRetrieval.LoadBankCustomer(bank, customerFilePath, accountsDirectoryPath, transactionsDirectory);
+
+        Console.WriteLine($"\nRetrieved customer information for {retrievedCustomer.ReturnFullName()}:");
+        Console.WriteLine($"Customer ID: {retrievedCustomer.CustomerId}");
+        Console.WriteLine($"First Name: {retrievedCustomer.FirstName}");
+        Console.WriteLine($"Last Name: {retrievedCustomer.LastName}");
+        Console.WriteLine($"Number of accounts: {retrievedCustomer.Accounts.Count}");
+
+        foreach (var account in retrievedCustomer.Accounts)
+        {
+            Console.WriteLine($"\nAccount number: {account.AccountNumber} is a {account.AccountType} account.");
+            Console.WriteLine($" - Balance: {account.Balance}");
+            Console.WriteLine($" - Interest Rate: {account.InterestRate}");
+            Console.WriteLine($" - Transactions:");
             foreach (var transaction in account.Transactions)
             {
-                // Append transaction data to the StringBuilder object
-                sb.AppendLine($"{transaction.TransactionId},{transaction.TransactionType},{transaction.TransactionDate},{transaction.TransactionTime},{transaction.PriorBalance:F2},{transaction.TransactionAmount:F2},{transaction.SourceAccountNumber},{transaction.TargetAccountNumber},{transaction.Description}");
+                Console.WriteLine($"    {transaction.ReturnTransaction()}");
             }
         }
 
-        Console.WriteLine($"\n\nUse the FileStream class to perform file I/O operations.");
-
-        // Write transaction data to file using FileStream
-        using (FileStream fileStream = new(fileStreamPath, FileMode.Create, FileAccess.Write))
-        {
-            // Convert the StringBuilder object to a byte array and write the byte array to the file
-            byte[] transactionDataBytes = new UTF8Encoding(true).GetBytes(sb.ToString());
-
-            // Use the Write method to write the byte array to the file
-            fileStream.Write(transactionDataBytes, 0, transactionDataBytes.Length);
-            Console.WriteLine($"\nFile length after write: {fileStream.Length} bytes");
-
-            // Use the Flush method to ensure all data is written to the file
-            fileStream.Flush();
-        }
-
-        Console.WriteLine($"\nTransaction data written using FileStream. File: {fileStreamPath}");
-
-        // Read transaction data from file using FileStream
-        using (FileStream fileStream = new(fileStreamPath, FileMode.Open, FileAccess.Read))
-        {
-            byte[] readBuffer = new byte[1024];
-            UTF8Encoding utf8Decoder = new(true);
-            int bytesRead;
-
-            Console.WriteLine("\nUsing FileStream to read/display transaction data.\n");
-
-            while ((bytesRead = fileStream.Read(readBuffer, 0, readBuffer.Length)) > 0)
-            {
-                Console.WriteLine($"bytes read: {utf8Decoder.GetString(readBuffer, 0, bytesRead)}\n");
-            }
-
-            Console.WriteLine($"File length: {fileStream.Length} bytes");
-            Console.WriteLine($"Current position: {fileStream.Position} bytes");
-
-            // Use the Seek method to move to the beginning of the file
-            fileStream.Seek(0, SeekOrigin.Begin);
-            Console.WriteLine($"Position after seek: {fileStream.Position} bytes");
-
-            // Use the FileStream.Read method to read the first 100 bytes
-            bytesRead = fileStream.Read(readBuffer, 0, 100);
-            Console.WriteLine($"Read first 100 bytes: {utf8Decoder.GetString(readBuffer, 0, bytesRead)}");
-        }
-
-        // Create a filepath for a binary file named binary.dat
-        string binaryFilePath = Path.Combine(directoryPath, "binary.dat");
-
-        // Create a BinaryWriter object and write binary data to the binary.dat file
-        using (BinaryWriter binaryWriter = new(File.Open(binaryFilePath, FileMode.Create)))
-        {
-            binaryWriter.Write(1.25);
-            binaryWriter.Write("Hello");
-            binaryWriter.Write(true);
-        }
-
-        Console.WriteLine($"\n\nBinary data written to: {binaryFilePath}");
-
-        // Create a BinaryReader object and read binary data from the binary.dat file
-        using (BinaryReader binaryReader = new(File.Open(binaryFilePath, FileMode.Open)))
-        {
-            double a = binaryReader.ReadDouble();
-            string b = binaryReader.ReadString();
-            bool c = binaryReader.ReadBoolean();
-            Console.WriteLine($"Binary data read from {binaryFilePath}: {a}, {b}, {c}");
-        }
     }
 }
