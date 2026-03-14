@@ -6,6 +6,7 @@ public class Bank
 {
     private readonly Guid _bankId;
     private readonly List<BankCustomer> _customers;
+    private readonly object _bankLock = new();
 
     public Guid BankId => _bankId;
     public IReadOnlyList<BankCustomer> Customers => _customers.AsReadOnly();
@@ -39,15 +40,18 @@ public class Bank
 
     internal BankCustomer? GetCustomerById(string customerId)
     {
-        foreach (BankCustomer customer in _customers)
+        lock (_bankLock)
         {
-            if (customer.CustomerId.Equals(customerId, StringComparison.OrdinalIgnoreCase))
+            foreach (BankCustomer customer in _customers)
             {
-                return customer;
+                if (customer.CustomerId.Equals(customerId, StringComparison.OrdinalIgnoreCase))
+                {
+                    return customer;
+                }
             }
-        }
 
-        return null;
+            return null;
+        }
     }
 
     internal int GetNumberOfTransactions()
@@ -127,7 +131,10 @@ public class Bank
 
     internal void AddCustomer(BankCustomer customer)
     {
-        _customers.Add(customer);
+        lock (_bankLock)
+        {
+            _customers.Add(customer);
+        }
     }
 
     internal void RemoveCustomer(BankCustomer customer)
