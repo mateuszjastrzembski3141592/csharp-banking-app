@@ -43,6 +43,7 @@ public class SimulateDepositsWithdrawalsTransfers
         {
             // Call SimulateActivityForPeriod for each full month in the date range
             DateOnly currentMonth = firstDayFirstFullMonth;
+            
             while (currentMonth < firstDayLastMonth)
             {
                 DateOnly lastDayOfMonth = new(currentMonth.Year, currentMonth.Month, DateTime.DaysInMonth(currentMonth.Year, currentMonth.Month));

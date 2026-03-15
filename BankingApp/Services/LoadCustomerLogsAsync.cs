@@ -10,9 +10,15 @@ public class LoadCustomerLogsAsync
     public static async Task ReadCustomerDataAsync(Bank bank)
     {
         string configDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Config");
+        string customersDirectoryPath = Path.Combine(configDirectoryPath, "Customers");
         string accountsDirectoryPath = Path.Combine(configDirectoryPath, "Accounts");
         string transactionsDirectoryPath = Path.Combine(configDirectoryPath, "Transactions");
 
-        await JsonRetrievalAsync.LoadAllCustomersAsync(bank, configDirectoryPath, accountsDirectoryPath, transactionsDirectoryPath);
+        var customers = await JsonRetrievalAsync.LoadAllCustomersAsync(bank, configDirectoryPath, accountsDirectoryPath, transactionsDirectoryPath);
+        
+        foreach (var customer in customers)
+        {
+            bank.AddCustomer(customer);
+        }
     }
 }

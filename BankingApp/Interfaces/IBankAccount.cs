@@ -12,7 +12,7 @@ public interface IBankAccount
     double InterestRate { get; }
     BankCustomer Owner { get; }
 
-    IReadOnlyList<Transaction> Transactions { get; }
+    IEnumerable<Transaction> Transactions { get; }
 
     void Deposit(double amount, DateOnly transactionDate, TimeOnly transactionTime, string description);
     bool Withdraw(double amount, DateOnly transactionDate, TimeOnly transactionTime, string description);
