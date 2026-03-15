@@ -14,15 +14,28 @@ The repository is used to strengthen my understanding of:
 ## Source
 https://microsoftlearning.github.io/mslearn-develop-oop-csharp/
 
+## How to navigate through this repository
+Because this application was built as a single, continuously evolving project, the `main` branch represents the final state of Exercise 16, meaning some features from earlier exercises may be unavailable in the final build.
+
+If you want to view the codebase exactly as it was at the end of a specific exercise / commit, you can navigate the Git history:
+**On GitHub:**
+1. Go to the [Commits](https://github.com/mateuszjastrzembski3141592/csharp-banking-app/commits/main/) page.
+2. Look for the commit message matching the exercise you want to see (e.g., `Create derived classes and implement overrides` for Ex 7).
+3. Click the `< >` (Browse the repository at this point) button next to that commit.
+
+**Locally via Git CLI:**
+You can checkout the repository at any point in time by finding the commit hash from the `git log` and running:
+`git checkout <commit-hash>`
+
 ## Status
-Active learning project.
+Completed.
 
 ## Development Roadmap
 | Exercise | Description |
 | :--- | :--- |
 | **Ex 1: Create class definitions and instantiate objects** | - Created `BankCustomer` class structure.<br>- Created `BankAccount` class structure.<br>- Implemented basic Console test in `Program.cs`. |
 | **Ex 2: Update a class with properties and methods** | - Encapsulated data using properties in `BankCustomer` and `BankAccount`.<br>- Implemented basic methods to change and display customer info in `BankCustomer`.<br>- Implemented core banking methods in `BankAccount`.<br>- Created extension methods in `Extensions.cs` for `BankCustomer` and `BankAccount`.<br>- Updated `Program.cs` to test the new logic. |
-| **Ex 3: Manage class implementations** | - Refactored `BankCustomer` into  partial classes (`BankCustomerMethods`).<br>- Added static properties for `BankAccount`.<br>- Created static `AccountCalculations` class for BankAccount methods.<br>-  Added optional parameters to `BankAccount` instance constructor.<br>- Implemented copy constructors for `BankCustomer` and `BankAccount`.<br>- Refactored `Program.cs` to test new functionalities and used object initializers. |
+| **Ex 3: Manage class implementations** | - Refactored `BankCustomer` into partial classes (`BankCustomerMethods`).<br>- Added static properties for `BankAccount`.<br>- Created static `AccountCalculations` class for BankAccount methods.<br>- Added optional parameters to `BankAccount` instance constructor.<br>- Implemented copy constructors for `BankCustomer` and `BankAccount`.<br>- Refactored `Program.cs` to test new functionalities and used object initializers. |
 | **Supplement to Ex 7** | - Created `IBankAccount` and `IBankCustomer` interfaces.<br>- Updated `BankAccount` to implement `IBankAccount` interface.<br>- Updated `BankCustomer` and `BankCustomerMethods` to implement `IBankCustomer` interface. |
 | **Ex 7: Implement base and derived classes** | - Created `CheckingAccount`, `SavingsAccount`, and `MoneyMarketAccount` derived classes.<br>- Updated `BankAccount` class definition with the `virtual` keyword.<br>- Implemented specialized features in derives classes.<br>- Updated derived classes to override properties and methods.<br>- Refactored `Program.cs` to test new functionalities. |
 | **Ex 8: Implement polymorphism** | - Created `IMonthlyReportGenerator`, `IQuarterlyReportGenerator`, and `IYearlyReportGenerator` reporting interfaces.<br>- Created `AccountReportGenerator` and `CustomerReportGenerator` reporting classes.<br>- Refactored project structure into `Interfaces`, `Models`, and `Services` categories.<br>- Refactored `Program.cs` to test new functionalities.|
@@ -31,8 +44,8 @@ Active learning project.
 | **Supplement to Ex 10** | - `Interfaces`: Updated `IBankAccount` and `IBankCustomer` interfaces.<br>- `Models`: Created `Bank` class.<br>- `Models`: Refactored classes.<br>- `Services`: Created `SimulateDepositsWithdrawalsTransfers`.<br>- `Services`: Updated `SimulateTransactions`.<br>- Refactored `Program` as preparation for `EX 10`. |
 | **Ex 10: Implement collection types** | - Updated `IBankAccount` and `IBankCustomer` interfaces.<br>- Updated `Bank`, `BankAccount`, `BankCustomer`, `CheckingAccount`, and `SimulateDepositsWithdrawalsTransfers`.<br>- Updated `Program` to test new functionalities with usage of `HashSet` and `Dictionary`. |
 | **Supplement to Ex 13** |- Updated `Interfaces`.<br>- Updated `Models`.<br>- Updated `Services`.<br>- Created `SimulateCustomerAccountActivity`. |
-| **Ex 13: Create and manage text files** | - Used `Path`, `Directory`, and `File` classes to create and enumare directories.<br>- Implemented `File` methods to write, read, and append CSV-formatted text.<br>- Performed `Copy`, `Move`, and `Delete` file management operations. |
+| **Ex 13: Create and manage text files** | - Used `Path`, `Directory`, and `File` classes to create and enumerate directories.<br>- Implemented `File` methods to write, read, and append CSV-formatted text.<br>- Performed `Copy`, `Move`, and `Delete` file management operations. |
 | **Ex 14: Serialize and deserialize JSON files** | - Created `BankAccountDTO` and `BankCustomerDTO` classes to manage JSON data structures.<br>- Implemented `JsonStorage` and `JsonRetrieval` classes for serialization operations.<br>- Updated `IBankAccount`, `BankCustomer`, `StandardCustomer`, and `Transactions` to support JSON mapping.<br>- Refactored `Program.cs` to test the serialization functionalities. |
-| **Ex 15: Implement tasks asynchronously and in parallel** | - Implemented `async` and `await` methods to perform non-blocking file operations.<br>- Utilized parallel execution to process multiple JSON configuration files concurrently.<br>- Applied `lock` statements to ensure thread safety during modigication of shared collections.<br>- Updated `.csproj` to automatically copy test data to the output directory. |
+| **Ex 15: Implement tasks asynchronously and in parallel** | - Implemented `async` and `await` methods to perform non-blocking file operations.<br>- Utilized parallel execution to process multiple JSON configuration files concurrently.<br>- Applied `lock` statements to ensure thread safety during modification of shared collections.<br>- Updated `.csproj` to automatically copy test data to the output directory. |
 | **Supplement to Ex 16** | - Updated `IBankAccount`, `Bank`, `BankAccount`, `JsonRetrievalAsync`, `LoadCustomerLogsAsync`, `Program.cs`.<br>- Created `CreateDataLogsAsync`, `JsonStorageAsync`. |
 | **Ex 16: Implement delegates in a C# app** | - Defined custom delegates to pass methods as parameters for dynamic object sorting.<br>- Implemented anonymous methods using lambda expressions for concise, inline logic.<br>- Utilized LINQ within lambdas to perform complex object comparisons based on aggregate data. |
