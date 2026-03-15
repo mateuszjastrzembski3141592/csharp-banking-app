@@ -4,8 +4,6 @@ using BankingApp.Services;
 
 namespace BankingApp.Models;
 
-// public delegate void TransactionProcessedCallback(Transaction transaction);
-
 public class BankAccount : IBankAccount
 {
     private static int s_nextAccountNumber;
@@ -60,15 +58,9 @@ public class BankAccount : IBankAccount
     }
 
     // Method to add a transaction to the account
-    // public void AddTransaction(Transaction transaction, TransactionProcessedCallback? callback = null)
-    // {
-    //     _transactions.Add(transaction);
-    //     callback?.Invoke(transaction);
-    // }
-    public void AddTransaction(Transaction transaction, Action<Transaction>? callback = null)
+    public void AddTransaction(Transaction transaction)
     {
         _transactions.Add(transaction);
-        callback?.Invoke(transaction);
     }
 
     // Method to remove a transaction from the account
@@ -95,21 +87,13 @@ public class BankAccount : IBankAccount
             if (description.Contains("-(TRANSFER)"))
             {
                 transactionType = "Transfer";
-                AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, amount, AccountNumber, AccountNumber, transactionType, description));
             }
             else if (description.Contains("-(BANK REFUND)"))
             {
                 transactionType = "Bank Refund";
-                AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, amount, AccountNumber, AccountNumber, transactionType, description), transaction =>
-                {
-                    Console.WriteLine($"Log the refund to customer {Owner.ReturnFullName()} for account {AccountNumber}.");
-                });
             }
-            else
-            {
-                transactionType = "Deposit";
-                AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, amount, AccountNumber, AccountNumber, transactionType, description));
-            }
+
+            AddTransaction(new Transaction(transactionDate, transactionTime, priorBalance, amount, AccountNumber, AccountNumber, transactionType, description));
         }
     }
 

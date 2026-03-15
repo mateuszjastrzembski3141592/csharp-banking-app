@@ -2,8 +2,6 @@ using System;
 
 namespace BankingApp.Models;
 
-// public delegate int CustomerComparison(BankCustomer x, BankCustomer y);
-
 public class Bank
 {
     private readonly Guid _bankId;
@@ -132,18 +130,5 @@ public class Bank
     internal void AddCustomer(IEnumerable<BankCustomer> customers)
     {
         _customers.AddRange(customers);
-    }
-
-    // public IEnumerable<BankCustomer> GetSortedCustomers(CustomerComparison comparison)
-    // {
-    //     var sortedCustomers = _customers.ToList();
-    //     sortedCustomers.Sort((x, y) => comparison(x, y));
-    //     return sortedCustomers;
-    // }
-    public IEnumerable<BankCustomer> GetSortedCustomers(Func<BankCustomer, BankCustomer, int> comparison)
-    {
-        var sortedCustomers = _customers.ToList();
-        sortedCustomers.Sort((x, y) => comparison(x, y));
-        return sortedCustomers;
     }
 }
