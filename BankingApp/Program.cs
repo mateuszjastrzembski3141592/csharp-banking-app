@@ -48,5 +48,32 @@ class Program
         Console.WriteLine($"Number of customers: {countBankCustomers}");
         Console.WriteLine($"Number of accounts: {countBankAccounts}");
         Console.WriteLine($"Number of transactions: {countBankTransactions}");
+
+        // Sort by balance
+        var sortedCustomers = bank.GetSortedCustomers((x, y) =>
+        {
+            double balanceX = x.Accounts.Sum(a => a.Balance);
+            double balanceY = y.Accounts.Sum(a => a.Balance);
+            return balanceY.CompareTo(balanceX);
+        });
+
+        Console.WriteLine("\nCustomers sorted by total balance:");
+        foreach (var customer in sortedCustomers)
+        {
+            Console.WriteLine($"{customer.ReturnFullName()} - Total Balance: {customer.Accounts.Sum(a => a.Balance):C}");
+        }
+
+        // Sort by name
+        var sortedCustomersByName = bank.GetSortedCustomers((x, y) =>
+        {
+            int lastNameComparison = x.LastName.CompareTo(y.LastName);
+            return lastNameComparison != 0 ? lastNameComparison : x.FirstName.CompareTo(y.FirstName);
+        });
+
+        Console.WriteLine("\nCustomers sorted by name:");
+        foreach (var customer in sortedCustomersByName)
+        {
+            Console.WriteLine($"{customer.ReturnFullName()} - Total Balance: {customer.Accounts.Sum(a => a.Balance):C}");
+        }
     }
 }
