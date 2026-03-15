@@ -14,67 +14,39 @@ class Program
 {
     static async Task Main()
     {
-        Console.WriteLine("Create a performance baseline by loading data synchronously.");
+        // Create a bank object
+        Bank bank = new();
 
-        // Create Bank objects
-        Bank bank1 = new(); // Bank object to load data synchronously
-        Bank bank2 = new(); // Bank object to load data asynchronously
-        Bank bank3 = new(); // Bank object to load data asynchronously and in parallel
-
-        // Get the time before loading the data
-        DateTime timeBeforeLoadCall = DateTime.Now;
-
-        // Load the customer data from the file
-        LoadCustomerLogs.ReadCustomerData(bank1);
-
-        // Get the time after loading the data
-        DateTime timeAfterLoadCall = DateTime.Now;
-
-        // Calculate the time taken to load the data
-        TimeSpan timeTakenToReturn = timeAfterLoadCall - timeBeforeLoadCall;
-        Console.WriteLine($"\nPerformance baseline: time taken to return to Main: {timeTakenToReturn.TotalSeconds} seconds");
-
-        await Task.Delay(2000);
+        // Generate 2 years of transactions for 50 customers
+        await CreateDataLogsAsync.GenerateCustomerDataAsync();
 
         // Load the customer data asynchronously from the file
-        Console.WriteLine("\nImplement File I/O tasks asynchronously.");
-
-        // Get the time before loading the data asynchronously
-        DateTime timeBeforeAsyncLoadCall = DateTime.Now;
-
-        // Start the async data loading task
-        var asyncLoadTask = LoadCustomerLogsAsync.ReadCustomerDataAsync(bank2);
-
-        DateTime timeAfterAsyncLoadCall = DateTime.Now;
-
-        Console.WriteLine($"\nTime taken to return to Main: {(timeAfterAsyncLoadCall - timeBeforeAsyncLoadCall).TotalSeconds} seconds");
+        var asyncLoadTask = LoadCustomerLogsAsync.ReadCustomerDataAsync(bank);
 
         // Wait for the async task to complete
         await asyncLoadTask;
 
-        DateTime timeAfterAsyncLoadCompleted = DateTime.Now;
+        // Get the bank information
+        int countBankCustomers = 0;
+        int countBankAccounts = 0;
+        int countBankTransactions = 0;
 
-        Console.WriteLine($"Time taken to load the data asynchronously: {(timeAfterAsyncLoadCompleted - timeBeforeAsyncLoadCall).TotalSeconds} seconds");
+        foreach (var customer in bank.GetAllCustomers())
+        {
+            countBankCustomers++;
+            foreach (var account in customer.Accounts)
+            {
+                countBankAccounts++;
+                foreach (var transaction in account.Transactions)
+                {
+                    countBankTransactions++;
+                }
+            }
+        }
 
-        await Task.Delay(2000);
-
-        Console.WriteLine("\nImplement File I/O tasks asynchronously and in parallel.");
-
-        // Get the time before loading the data asynchronously using parallel tasks
-        DateTime timeBeforeAsyncParallelLoadCall = DateTime.Now;
-
-        // Start the async data loading task
-        var asyncParallelLoadTask = LoadCustomerLogsAsyncParallel.ReadCustomerDataAsyncParallel(bank3);
-
-        DateTime timeAfterAsyncParallelLoadCall = DateTime.Now;
-
-        // Wait for the async task to complete
-        await asyncParallelLoadTask;
-
-        DateTime timeAfterAsyncParallelLoadCompleted = DateTime.Now;
-
-        Console.WriteLine($"\nTime taken to return to Main: {(timeAfterAsyncParallelLoadCall - timeBeforeAsyncParallelLoadCall).TotalSeconds} seconds");
-        Console.WriteLine($"Time taken to load the data asynchronously and in parallel: {(timeAfterAsyncParallelLoadCompleted - timeBeforeAsyncParallelLoadCall).TotalSeconds} seconds");
-
+        Console.WriteLine($"\nBank information...");
+        Console.WriteLine($"Number of customers: {countBankCustomers}");
+        Console.WriteLine($"Number of accounts: {countBankAccounts}");
+        Console.WriteLine($"Number of transactions: {countBankTransactions}");
     }
 }

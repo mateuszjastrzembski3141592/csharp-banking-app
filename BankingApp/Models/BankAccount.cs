@@ -24,7 +24,7 @@ public class BankAccount : IBankAccount
 
     public virtual double InterestRate { get; protected set; }
 
-    public IReadOnlyList<Transaction> Transactions => _transactions.AsReadOnly();
+    public IEnumerable<Transaction> Transactions => _transactions;
 
     static BankAccount()
     {

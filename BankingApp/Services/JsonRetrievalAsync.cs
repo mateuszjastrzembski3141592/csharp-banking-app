@@ -69,7 +69,8 @@ public static class JsonRetrievalAsync
 
         foreach (var filePath in Directory.GetFiles(Path.Combine(directoryPath, "Customers"), "*.json"))
         {
-            customers.Add(await LoadBankCustomerAsync(bank, filePath, accountsDirectoryPath, transactionsDirectoryPath));
+            // customers.Add(await LoadBankCustomerAsync(bank, filePath, accountsDirectoryPath, transactionsDirectoryPath));
+            await LoadBankCustomerAsync(bank, filePath, accountsDirectoryPath, transactionsDirectoryPath);
         }
 
         return customers;
